@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/core/router/app_routes.dart';
 
 class GetStartedButton extends StatelessWidget {
   const GetStartedButton({super.key, required this.isButtonActive});
@@ -17,7 +18,11 @@ class GetStartedButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(50),
-          onTap: isButtonActive ? () {} : null,
+          onTap: isButtonActive
+              ? () {
+                Navigator.pushReplacementNamed(context, AppRoutes.homeView);
+                }
+              : null,
           child: SizedBox(
             height: 50,
             width: double.infinity,
