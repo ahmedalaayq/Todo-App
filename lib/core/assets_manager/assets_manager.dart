@@ -8,7 +8,11 @@ class AssetsManager {
 
   static const String imagesSplash = "assets/images/splash.png";
 
+  static const String imagesSun = "assets/images/sun.svg";
+
   static const String imagesTasky = "assets/images/tasky.svg";
+
+  static const String imagesTopImage = "assets/images/top_image.png";
 
   static const String imagesWavingHand = "assets/images/waving_hand.svg";
 }
