@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/core/router/app_routes.dart';
 import 'package:todo_app/core/router/on_generate_route.dart';
+import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/generated/l10n.dart';
 
 import 'Features/home/models/task.dart';
@@ -80,6 +81,17 @@ class MyApp extends StatelessWidget {
                 }
                 return Icon(Icons.light_mode_outlined);
               }),
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF15B86C),
+                foregroundColor: Colors.white,
+                textStyle: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: .bold,
+                  fontFamily: AppFonts.cairoFontFamily,
+                ),
+              ),
             ),
             fontFamily: GoogleFonts.cairo().fontFamily,
             splashColor: Colors.transparent,

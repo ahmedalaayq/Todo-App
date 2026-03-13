@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:todo_app/Features/profile/views/user_details_view.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
@@ -37,7 +38,9 @@ class _ProfileSectionState extends State<ProfileSection> {
         _buildListTile(
           context,
           title: 'معلومات المستخدم',
-          onTap: () {},
+          onTap: () {
+            context.push(UserDetailsView());
+          },
           leading: SvgPicture.asset(AssetsManager.imagesIconsProfileIcon),
         ),
         _buildListTile(
