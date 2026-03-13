@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
 
 class SharedTextFormField extends StatelessWidget {
-  const SharedTextFormField({super.key, this.hintText, this.validator, this.controller});
+  const SharedTextFormField({
+    super.key,
+    this.hintText,
+    this.validator,
+    this.controller,
+    this.maxLines = 1, this.enableValidator= true,
+  });
   final String? hintText;
   final FormFieldValidator? validator;
   final TextEditingController? controller;
+  final int? maxLines;
+  final bool? enableValidator;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      maxLines: maxLines,
       controller: controller,
-      validator:
+      validator: 
+      enableValidator == true?
           validator ??
           (value) {
             if (value == null || value.trim().isEmpty) {
               return 'feild is required';
             }
             return null;
-          },
+          } : null,
       cursorColor: Color(0xFF15B86C),
       cursorHeight: 16,
       onTapOutside: (state) => FocusScope.of(context).unfocus(),

@@ -13,22 +13,22 @@ class HomeGreetingItem extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         Text(
-          'Yuhuu ,Your work Is ',
+          'عمل رائع',
           style: Theme.of(
             context,
-          ).textTheme.titleLarge?.copyWith(fontSize: 32, fontWeight: .w500),
+          ).textTheme.titleLarge?.copyWith(fontSize: 28, fontWeight: .w500),
         ),
             Row(
       children: [
         Text(
-          'almost done ! ',
+          'لقد انهيت جميع مهماتك ! ',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontSize: 32,
+            fontSize: 22.sp,
             fontWeight: .w500,
           ),
         ),
-        SizedBox(width: 8.w),
-        SvgPicture.asset(AssetsManager.imagesWavingHand),
+        SizedBox(width: 2.w),
+        Center(child: SvgPicture.asset(AssetsManager.imagesWavingHand)),
       ],
     ),
       ],
