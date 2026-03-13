@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/home/views/widgets/tasks_list.dart';
-import 'package:todo_app/core/extensions/shared_extensions.dart';
 
 class HighPriority extends StatefulWidget {
   const HighPriority({

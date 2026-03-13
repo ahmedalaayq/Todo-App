@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
-import 'package:todo_app/Features/home/views/widgets/high_priority_item.dart';
 import 'package:todo_app/Features/home/views/widgets/high_priority_task_item.dart';
 import 'package:todo_app/Features/home/views/widgets/sliver_tasks_list.dart';
 import 'achieved_tasks_item.dart';

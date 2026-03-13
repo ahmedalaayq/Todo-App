@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Features/home/views/high_priority.dart';
 import 'package:todo_app/Features/home/views/widgets/add_task_view.dart';
 import 'package:todo_app/Features/splash/views/splash_view.dart';
 import 'package:todo_app/Features/welcome/views/welcome_view.dart';

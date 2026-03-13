@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/profile/views/widgets/profile_section.dart';
 import 'package:todo_app/Features/profile/views/widgets/user_profile_info.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
-import 'package:todo_app/core/extensions/shared_extensions.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});

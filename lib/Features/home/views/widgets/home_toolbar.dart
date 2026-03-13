@@ -4,16 +4,12 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
-import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/utils.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class HomeToolBar extends StatefulWidget {
   const HomeToolBar({
