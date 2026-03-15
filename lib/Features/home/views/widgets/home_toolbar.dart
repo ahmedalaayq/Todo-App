@@ -26,7 +26,7 @@ class HomeToolBar extends StatefulWidget {
 
 class _HomeToolBarState extends State<HomeToolBar> {
   bool welcomeSeen = false;
-
+  bool isLoading = false;
   String userName = 'Guest';
 
   @override
@@ -38,17 +38,14 @@ class _HomeToolBarState extends State<HomeToolBar> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isEmptyTasks = widget.tasks.isEmpty;
     return Row(
       spacing: 8,
       children: [
         Expanded(
           child: Row(
             children: [
-              Image.asset(
-                AssetsManager.imagesAhmed,
-                width: 42.w,
-                height: 42.h,
-              ),
+              Image.asset(AssetsManager.imagesAhmed, width: 42.w, height: 42.h),
               SizedBox(width: 8.w),
               Expanded(
                 child: Column(
@@ -63,7 +60,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
                               fontFamily: GoogleFonts.cairo().fontFamily,
-    
+
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
                               color: Colors.white,
@@ -103,65 +100,88 @@ class _HomeToolBarState extends State<HomeToolBar> {
             ),
           ),
         ),
-        Material(
-          child: InkWell(
-            overlayColor: .all(Color(0xFF282828)),
-            splashColor: Color(0xFF282828),
-            borderRadius: .circular(50),
-            onTap: () async {
-              final allDone = widget.tasks.every((e) => e.isDone);
-    
-              final confirm = await showDialog<bool>(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return _showAcceptDialog(allDone, context);
-                },
-              );
-    
-              /// لو المستخدم ضغط إلغاء
-              if (confirm != true) return;
-    
-              /// تنفيذ العملية
-              for (var task in widget.tasks) {
-                task.isDone = !allDone;
-              }
-    
-              final prefs = await SharedPreferences.getInstance();
-              final jsonTasks = widget.tasks.map((e) => e.toJson()).toList();
-              await prefs.setString('tasks', jsonEncode(jsonTasks));
-    
-              widget.refreshTasks();
-    
-              /// Snackbar
-              AnimatedSnackBar.material(
-                borderRadius: BorderRadius.circular(20.r),
-                animationDuration: const Duration(milliseconds: 700),
-                duration: const Duration(milliseconds: 3000),
-                animationCurve: Curves.easeInOut,
-                mobileSnackBarPosition: MobileSnackBarPosition.top,
-                !allDone
-                    ? 'تم تنفيذ جميع المهمات'
-                    : 'تم الغاء تنفيذ جميع المهمات',
-                type: !allDone
-                    ? AnimatedSnackBarType.success
-                    : AnimatedSnackBarType.error,
-              ).show(context);
-            },
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              padding: .all(4),
-              decoration: BoxDecoration(
-                color: widget.tasks.every((e) => e.isDone)
-                    ? Color(0xFF15B86C)
-                    : Color(0xFFFF4444),
-                shape: .circle,
-              ),
-              child: Icon(
-                !widget.tasks.every((e) => e.isDone)
-                    ? Icons.check_circle_outline
-                    : Icons.check_circle,
-                color: Color(0xFFFFFFFF),
+
+        AbsorbPointer(
+          absorbing: isLoading,
+          child: Material(
+            child: InkWell(
+              overlayColor: .all(Color(0xFF282828)),
+              splashColor: Color(0xFF282828),
+              borderRadius: .circular(50),
+              onTap: () async {
+                isLoading = true;
+                setState(() {});
+                if (isEmptyTasks) {
+                  isLoading = false;
+                  return AnimatedSnackBar.material(
+                    borderRadius: BorderRadius.circular(20.r),
+                    animationDuration: const Duration(milliseconds: 700),
+                    duration: const Duration(milliseconds: 3000),
+                    animationCurve: Curves.easeInOut,
+                    mobileSnackBarPosition: MobileSnackBarPosition.top,
+                    'تعذر تنفيذ الإجراء تأكد من اضافة المهام قبل المحاولة',
+                    type: AnimatedSnackBarType.error,
+                  ).show(context);
+                }
+                setState(() {});
+
+                final allDone = widget.tasks.every((e) => e.isDone);
+
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return _showAcceptDialog(allDone, context);
+                  },
+                );
+
+                /// لو المستخدم ضغط إلغاء
+                if (confirm != true) return;
+
+                /// تنفيذ العملية
+                for (var task in widget.tasks) {
+                  task.isDone = !allDone;
+                }
+
+                final prefs = await SharedPreferences.getInstance();
+                final jsonTasks = widget.tasks.map((e) => e.toJson()).toList();
+                await prefs.setString('tasks', jsonEncode(jsonTasks));
+
+                widget.refreshTasks();
+
+                /// Snackbar
+                AnimatedSnackBar.material(
+                  borderRadius: BorderRadius.circular(20.r),
+                  animationDuration: const Duration(milliseconds: 700),
+                  duration: const Duration(milliseconds: 3000),
+                  animationCurve: Curves.easeInOut,
+                  mobileSnackBarPosition: MobileSnackBarPosition.top,
+                  !allDone
+                      ? 'تم تنفيذ جميع المهمات'
+                      : 'تم الغاء تنفيذ جميع المهمات',
+                  type: !allDone
+                      ? AnimatedSnackBarType.success
+                      : AnimatedSnackBarType.error,
+                ).show(context);
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: .all(4),
+                decoration: BoxDecoration(
+                  color: isEmptyTasks == true
+                      ? Color(0xFFFF4444)
+                      : Color(0xFF15B86C),
+
+                  shape: .circle,
+                ),
+                child: Icon(
+                  isEmptyTasks
+                      ? Icons.error_outline
+                      : !widget.tasks.every((e) => e.isDone)
+                      ? Icons.check_circle_outline
+                      : Icons.check_circle,
+                  color: Color(0xFFFFFFFF),
+                ),
               ),
             ),
           ),
