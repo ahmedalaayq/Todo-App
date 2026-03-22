@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -49,9 +50,7 @@ class CustomBottomNavBar extends StatelessWidget {
               icon: SvgPicture.asset(
                 AssetsManager.imagesIconsHome,
                 colorFilter: ColorFilter.mode(
-                  Theme.of(context).brightness != Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
+                !ThemeManager.isDark ? Colors.black : Colors.white,
                   .srcIn,
                 ),
               ),
@@ -65,9 +64,7 @@ class CustomBottomNavBar extends StatelessWidget {
               icon: SvgPicture.asset(
                 AssetsManager.imagesIconsTodo,
                 colorFilter: ColorFilter.mode(
-                  Theme.of(context).brightness != Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
+                !ThemeManager.isDark ? Colors.black : Colors.white,
                   .srcIn,
                 ),
               ),
@@ -81,9 +78,7 @@ class CustomBottomNavBar extends StatelessWidget {
               icon: SvgPicture.asset(
                 AssetsManager.imagesIconsCompletedTasks,
                 colorFilter: ColorFilter.mode(
-                  Theme.of(context).brightness != Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
+                !ThemeManager.isDark ? Colors.black : Colors.white,
                   .srcIn,
                 ),
               ),
@@ -97,9 +92,7 @@ class CustomBottomNavBar extends StatelessWidget {
               icon: SvgPicture.asset(
                 AssetsManager.imagesIconsProfile,
                 colorFilter: ColorFilter.mode(
-                  Theme.of(context).brightness != Brightness.dark
-                      ? Colors.black
-                      : Colors.white,
+                  !ThemeManager.isDark ? Colors.black : Colors.white,
                   .srcIn,
                 ),
               ),
