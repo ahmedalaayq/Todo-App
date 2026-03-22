@@ -16,6 +16,8 @@ class AssetsManager {
 
   static const String imagesIconsLogoutIcon = "assets/images/icons/logout_icon.svg";
 
+  static const String imagesIconsMoonIcon = "assets/images/icons/moon_icon.svg";
+
   static const String imagesIconsProfile = "assets/images/icons/profile.svg";
 
   static const String imagesIconsProfileIcon = "assets/images/icons/profile_icon.svg";
