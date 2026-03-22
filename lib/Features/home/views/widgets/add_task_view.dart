@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/shared/shared_text_form_field.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 import 'high_priority_item.dart';
 
 class AddTaskView extends StatefulWidget {
@@ -102,25 +102,25 @@ class _AddTaskViewState extends State<AddTaskView> {
         scrollDirection: Axis.vertical,
         physics: const BouncingScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0.w),
+          padding: EdgeInsets.symmetric(horizontal: AppSize.w(16)),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: AppSize.h(20)),
                 Text(
                   'عنوان المهمة',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
                 SharedTextFormField(
                   controller: _taskNameController,
                   hintText: 'Finish UI design for login screen',
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: AppSize.h(20)),
                 Text(
                   'وصف المهمة',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -135,7 +135,7 @@ class _AddTaskViewState extends State<AddTaskView> {
                       'Finish onboarding UI and hand off to devs by Thursday.',
                   maxLines: 5,
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: AppSize.h(20)),
                 HighPriorityItem(
                   isBtnActive: isBtnActive,
                   highPriorityCallBack: (highPriority) {
@@ -152,11 +152,11 @@ class _AddTaskViewState extends State<AddTaskView> {
       bottomNavigationBar: AnimatedPadding(
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.only(
-          left: 16.w,
-          right: 16.w,
+          left: AppSize.w(16),
+          right: AppSize.w(16),
           bottom: MediaQuery.of(context).viewInsets.bottom == 0
-              ? 20.h
-              : MediaQuery.of(context).viewInsets.bottom + 12.h,
+              ? AppSize.h(20)
+              : MediaQuery.of(context).viewInsets.bottom + AppSize.h(12),
         ),
         child: AnimatedCrossFade(
           duration: const Duration(milliseconds: 300),
@@ -166,18 +166,18 @@ class _AddTaskViewState extends State<AddTaskView> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF15B86C),
                 foregroundColor: Colors.white,
-                minimumSize: Size(double.infinity, 45.h),
+                minimumSize: Size(double.infinity, AppSize.h(45)),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50.r),
+                  borderRadius: BorderRadius.circular(AppSize.r(50)),
                 ),
                 elevation: 0,
               ),
-              icon: Icon(Icons.add, size: 18.sp),
+              icon: Icon(Icons.add, size: AppSize.sp(18)),
               label: Text(
                 'Add Task'.capitalizeEachWord,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Colors.white,
+                  fontWeight: .bold,
                 ),
               ),
             ),

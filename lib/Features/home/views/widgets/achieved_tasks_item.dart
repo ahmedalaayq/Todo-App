@@ -1,8 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 class AchievedTasksItem extends StatefulWidget {
   const AchievedTasksItem({super.key, required this.tasks});
@@ -30,6 +29,7 @@ class _AchievedTasksItemState extends State<AchievedTasksItem> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final doneTasks = widget.tasks.where((e) => e.isDone == true).length;
     final totalTasks = widget.tasks.length;
 
@@ -39,8 +39,11 @@ class _AchievedTasksItemState extends State<AchievedTasksItem> {
     return Container(
       padding: .all(12),
       decoration: BoxDecoration(
-        borderRadius: .circular(20.r),
-        color: Color(0xFF282828),
+        borderRadius: .circular(AppSize.r(20)),
+        color: Theme.of(context).colorScheme.primaryContainer,
+        border: theme.brightness == .light
+            ? Border.all(color: Color(0xFFD1DAD6), width: AppSize.w(1))
+            : null,
       ),
       child: Row(
         children: [
@@ -50,20 +53,15 @@ class _AchievedTasksItemState extends State<AchievedTasksItem> {
               children: [
                 Text(
                   'المهمات المنجزة',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 16.sp,
-                    fontFamily: GoogleFonts.cairo().fontFamily,
-                    fontWeight: .bold
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: .bold),
                 ),
                 Text(
                   '$doneTasks من $totalTasks منجزة',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontSize: 14.sp,
-                    color: Color(0xFFC6C6C6),
-                    fontFamily: GoogleFonts.cairo().fontFamily,
-                    fontWeight: .w500
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
                 ),
               ],
             ),
@@ -87,11 +85,9 @@ class _AchievedTasksItemState extends State<AchievedTasksItem> {
               FittedBox(
                 child: Text(
                   "${(value * 100).toInt()}%",
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13.sp,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
                 ),
               ),
             ],

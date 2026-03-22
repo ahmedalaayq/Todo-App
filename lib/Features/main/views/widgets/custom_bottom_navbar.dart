@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   const CustomBottomNavBar({
@@ -21,21 +21,20 @@ class CustomBottomNavBar extends StatelessWidget {
         data: Theme.of(context),
         child: NavigationBar(
           animationDuration: Duration(milliseconds: 500),
-          labelPadding: .symmetric(horizontal: 4,vertical: 4.0),
+          labelPadding: .symmetric(horizontal: 4, vertical: 4.0),
           labelBehavior: .onlyShowSelected,
           labelTextStyle: .resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: .bold,
-                fontSize: 12.sp,
+                fontSize: AppSize.sp(12),
                 height: 1.5,
                 fontFamily: GoogleFonts.cairo().fontFamily,
-                
               );
             }
             return Theme.of(context).textTheme.titleSmall?.copyWith(
               fontWeight: .w500,
-              fontSize: 12.sp,
+              fontSize: AppSize.sp(12),
               height: 1.5,
               fontFamily: GoogleFonts.cairo().fontFamily,
             );
@@ -44,10 +43,18 @@ class CustomBottomNavBar extends StatelessWidget {
           onDestinationSelected: (int index) => onTransition(index),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           selectedIndex: currentIndex,
-          height: 55.h,
+          height: AppSize.h(60),
           destinations: [
             NavigationDestination(
-              icon: SvgPicture.asset(AssetsManager.imagesIconsHome),
+              icon: SvgPicture.asset(
+                AssetsManager.imagesIconsHome,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).brightness != Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
+                  .srcIn,
+                ),
+              ),
               selectedIcon: SvgPicture.asset(
                 AssetsManager.imagesIconsHome,
                 colorFilter: ColorFilter.mode(Color(0xFF15B86C), .srcIn),
@@ -55,7 +62,15 @@ class CustomBottomNavBar extends StatelessWidget {
               label: 'الرئيسية',
             ),
             NavigationDestination(
-              icon: SvgPicture.asset(AssetsManager.imagesIconsTodo),
+              icon: SvgPicture.asset(
+                AssetsManager.imagesIconsTodo,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).brightness != Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
+                  .srcIn,
+                ),
+              ),
               selectedIcon: SvgPicture.asset(
                 AssetsManager.imagesIconsTodo,
                 colorFilter: ColorFilter.mode(Color(0xFF15B86C), .srcIn),
@@ -63,7 +78,15 @@ class CustomBottomNavBar extends StatelessWidget {
               label: 'المهمات',
             ),
             NavigationDestination(
-              icon: SvgPicture.asset(AssetsManager.imagesIconsCompletedTasks),
+              icon: SvgPicture.asset(
+                AssetsManager.imagesIconsCompletedTasks,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).brightness != Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
+                  .srcIn,
+                ),
+              ),
               selectedIcon: SvgPicture.asset(
                 AssetsManager.imagesIconsCompletedTasks,
                 colorFilter: ColorFilter.mode(Color(0xFF15B86C), .srcIn),
@@ -71,7 +94,15 @@ class CustomBottomNavBar extends StatelessWidget {
               label: 'المكتملة',
             ),
             NavigationDestination(
-              icon: SvgPicture.asset(AssetsManager.imagesIconsProfile),
+              icon: SvgPicture.asset(
+                AssetsManager.imagesIconsProfile,
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).brightness != Brightness.dark
+                      ? Colors.black
+                      : Colors.white,
+                  .srcIn,
+                ),
+              ),
               selectedIcon: SvgPicture.asset(
                 AssetsManager.imagesIconsProfile,
                 colorFilter: ColorFilter.mode(Color(0xFF15B86C), .srcIn),

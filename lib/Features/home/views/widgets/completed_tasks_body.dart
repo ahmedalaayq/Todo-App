@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 import 'sliver_tasks_list.dart';
 
@@ -26,14 +26,19 @@ class CompletedTasksBody extends StatelessWidget {
                 'لا يوجد مهمات مكتملة',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
+                  fontSize: AppSize.sp(18),
                 ),
               ),
             ),
           )
         else
           SliverPadding(
-            padding: EdgeInsets.only(left: 8, right: 8, bottom: 70.h, top: 20),
+            padding: EdgeInsets.only(
+              left: AppSize.w(8),
+              right: AppSize.w(8),
+              bottom: AppSize.h(70),
+              top: AppSize.h(20),
+            ),
             sliver: SliverTasksList(
               removeTask: removeTask,
               tasks: tasks,

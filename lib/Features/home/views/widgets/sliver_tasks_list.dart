@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/task.dart';
-import 'custom_todo_item.dart';
+import 'custom_task_item.dart';
 
 class SliverTasksList extends StatelessWidget {
   const SliverTasksList({
@@ -21,7 +21,7 @@ class SliverTasksList extends StatelessWidget {
       delegate: SliverChildBuilderDelegate((context, index) {
         return Padding(
           padding: .symmetric(horizontal: 8),
-          child: CustomTodoItem(
+          child: CustomTaskItem(
             removeTask: removeTask,
             task: tasks[index],
             index: index,

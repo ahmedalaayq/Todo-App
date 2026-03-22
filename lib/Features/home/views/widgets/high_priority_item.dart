@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 class HighPriorityItem extends StatefulWidget {
   const HighPriorityItem({
@@ -20,23 +20,27 @@ class _HighPriorityItemState extends State<HighPriorityItem> {
     if (!widget.isBtnActive) {
       return AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        margin: EdgeInsets.only(top: 12.h),
-        padding: EdgeInsets.all(12.w),
+        margin: EdgeInsets.only(top: AppSize.h(12)),
+        padding: EdgeInsets.all(AppSize.w(12)),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(AppSize.r(14)),
           color: Colors.orange.withValues(alpha: 0.08),
           border: Border.all(color: Colors.orange.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
-            Icon(Icons.priority_high, color: Colors.orange, size: 18.sp),
-            SizedBox(width: 8.w),
+            Icon(
+              Icons.priority_high,
+              color: Colors.orange,
+              size: AppSize.sp(18),
+            ),
+            SizedBox(width: AppSize.w(8)),
             Expanded(
               child: Text(
-                'This task will be added as normal priority.',
+                'سيتم اضافة المهمة بالأولوية العادية',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Colors.orange,
-                  fontSize: 13.sp,
+                  fontSize: AppSize.sp(13),
                 ),
               ),
             ),
@@ -49,9 +53,7 @@ class _HighPriorityItemState extends State<HighPriorityItem> {
       onTap: () {
         setState(() {
           highPriorityTask = !highPriorityTask;
-          widget.highPriorityCallBack(
-            highPriorityTask
-          );
+          widget.highPriorityCallBack(highPriorityTask);
         });
       },
 
@@ -59,16 +61,19 @@ class _HighPriorityItemState extends State<HighPriorityItem> {
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(
+              horizontal: AppSize.w(10),
+              vertical: AppSize.h(10),
+            ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18.r),
+              borderRadius: BorderRadius.circular(AppSize.r(18)),
               color: highPriorityTask
                   ? const Color(0xFF15B86C).withValues(alpha: 0.15)
-                  : const Color(0xFF2C2C2C),
+                  : Theme.of(context).colorScheme.primaryContainer,
               border: Border.all(
                 color: highPriorityTask
                     ? const Color(0xFF15B86C)
-                    : Colors.grey.shade700,
+                    : Theme.of(context).colorScheme.primaryContainer,
                 width: 1.5,
               ),
             ),
@@ -84,20 +89,19 @@ class _HighPriorityItemState extends State<HighPriorityItem> {
               child: Icon(
                 highPriorityTask ? Icons.priority_high : Icons.low_priority,
                 color: Colors.white,
-                size: 18.sp,
+                size: AppSize.sp(18),
               ),
             ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: AppSize.w(12)),
           Expanded(
             child: Text(
               'High Priority Task',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                fontSize: 16.sp,
                 color: highPriorityTask
                     ? const Color(0xFF15B86C)
-                    : Colors.white,
+                    : Theme.of(context).textTheme.bodyLarge!.color,
               ),
             ),
           ),

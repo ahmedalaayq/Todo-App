@@ -3,21 +3,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/router/app_routes.dart';
 import 'package:todo_app/core/router/on_generate_route.dart';
-import 'package:todo_app/core/theme/app_fonts.dart';
+import 'package:todo_app/core/theme/light_theme.dart';
+import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/generated/l10n.dart';
-
 import 'Features/home/models/task.dart';
+import 'core/theme/dark_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-
   final welcomeSeen = prefs.getBool('welcome') ?? false;
+  await PreferenceManager.init();
+  ThemeManager.init();
   runApp(MyApp(welcomeSeen: welcomeSeen));
 }
 
@@ -33,75 +36,28 @@ class MyApp extends StatelessWidget {
       useInheritedMediaQuery: true,
       ensureScreenSize: true,
       builder: (context, widget) {
-        return MaterialApp(
-          locale: Locale('ar'),
-          localizationsDelegates: [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: S.delegate.supportedLocales,
-          navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: false,
-          title: 'Todo App',
-          theme: ThemeData(
-            useMaterial3: true,
-            switchTheme: SwitchThemeData(
-              trackColor: .resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const Color(0xFF15B86C);
-                }
-                return const Color(0xFFCDCDCD);
-              }),
-              thumbColor: .resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const Color(0xFFFFFFFF);
-                }
-                return Colors.grey;
-              }),
-              trackOutlineColor: .resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return const Color(0xFF15B86C).withValues(alpha: 0.15);
-                }
-                return Colors.white;
-              }),
-              trackOutlineWidth: .resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return 18.w;
-                }
-                return 2.w;
-              }),
-              thumbIcon: .resolveWith((states) {
-                if (states.contains(WidgetState.selected)) {
-                  return Icon(
-                    Icons.dark_mode_outlined,
-                    color: Colors.grey.shade600,
-                  );
-                }
-                return Icon(Icons.light_mode_outlined);
-              }),
-            ),
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF15B86C),
-                foregroundColor: Colors.white,
-                textStyle: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: .bold,
-                  fontFamily: AppFonts.cairoFontFamily,
-                ),
-              ),
-            ),
-            fontFamily: GoogleFonts.cairo().fontFamily,
-            splashColor: Colors.transparent,
-            splashFactory: NoSplash.splashFactory,
-            brightness: .dark,
+        return ValueListenableBuilder(
+          valueListenable: ThemeManager.themeNotifier,
+          builder: (context, updatedValue, _) => MaterialApp(
+            locale: Locale('ar'),
+            localizationsDelegates: [
+              S.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: S.delegate.supportedLocales,
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            title: 'Todo',
+            darkTheme: darkTheme,
+            themeMode: updatedValue,
+            theme: lightTheme,
+            onGenerateRoute: onGenerateRoute,
+            initialRoute: welcomeSeen
+                ? AppRoutes.splashView
+                : AppRoutes.welcomeView,
           ),
-          onGenerateRoute: onGenerateRoute,
-          initialRoute: welcomeSeen
-              ? AppRoutes.splashView
-              : AppRoutes.welcomeView,
         );
       },
     );

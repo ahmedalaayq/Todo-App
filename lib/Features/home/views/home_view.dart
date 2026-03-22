@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/router/app_routes.dart' as route;
+import 'package:todo_app/core/utils/app_size.dart';
 
 import 'widgets/home_view_body.dart';
 
@@ -44,12 +44,13 @@ class _HomeViewState extends State<HomeView> {
             foregroundColor: Colors.white,
             minimumSize: const Size(164, 45),
           ),
-          icon: Icon(Icons.add, size: 18.sp),
+          icon: Icon(Icons.add, size: AppSize.sp(18)),
           label: Text(
             'إضافة مهمة جديدة',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.bold,
-              fontSize: 15.sp,
+              fontSize: AppSize.sp(15),
+              color: Colors.white,
 
               fontFamily: GoogleFonts.cairo().fontFamily,
             ),

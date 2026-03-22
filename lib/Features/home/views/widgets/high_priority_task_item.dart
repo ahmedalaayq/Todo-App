@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/home/views/high_priority.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
-import 'package:todo_app/core/theme/app_fonts.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 class HighPriorityTaskItem extends StatelessWidget {
   const HighPriorityTaskItem({
@@ -22,6 +21,7 @@ class HighPriorityTaskItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final highPriorityTasks = tasks.reversed
         .where((e) => e.isHighPriority)
         .take(4)
@@ -29,8 +29,11 @@ class HighPriorityTaskItem extends StatelessWidget {
     return Container(
       padding: .all(8),
       decoration: BoxDecoration(
-        borderRadius: .circular(20.r),
-        color: Color(0xFF282828),
+        borderRadius: .circular(AppSize.r(20)),
+        color: theme.colorScheme.primaryContainer,
+        border: theme.brightness == .light
+            ? Border.all(color: Color(0xFFD1DAD6), width: AppSize.w(1))
+            : null,
       ),
       child: Row(
         mainAxisAlignment: .spaceBetween,
@@ -46,7 +49,7 @@ class HighPriorityTaskItem extends StatelessWidget {
                 ),
                 child: Text(
                   'المهمات ذات الأولوية القصوى',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: Color(0xFF15B86C),
                     fontWeight: .bold,
                   ),
@@ -64,17 +67,16 @@ class HighPriorityTaskItem extends StatelessWidget {
                         checkColor: Colors.white,
                         activeColor: const Color(0xFF15B86C),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.r),
+                          borderRadius: BorderRadius.circular(AppSize.r(4)),
                         ),
                         onChanged: (value) => onCheckTask(value, e),
                       ),
                       Text(
                         e.taskName,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontWeight: .bold,
-                              fontFamily: AppFonts.cairoFontFamily,
-                            ),
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          decoration: e.isDone ? .lineThrough : null,
+                          fontSize: AppSize.sp(14)
+                        ),
                       ),
                     ],
                   ),
@@ -82,14 +84,16 @@ class HighPriorityTaskItem extends StatelessWidget {
               ),
             ],
           ),
-    
+
           InkWell(
             splashFactory: NoSplash.splashFactory,
             overlayColor: .all(Colors.transparent),
             onTap: () async {
               await context.push(
                 HighPriority(
-                  highPriorityTasks: tasks.where((e)=> e.isHighPriority).toList(),
+                  highPriorityTasks: tasks
+                      .where((e) => e.isHighPriority)
+                      .toList(),
                   removeTask: removeTask,
                   checkCard: (Task task, bool value) {
                     onCheckTask(value, task);
@@ -99,18 +103,24 @@ class HighPriorityTaskItem extends StatelessWidget {
               refreshTasks;
             },
             child: Container(
-              padding: .all(17.sp),
-              width: 48.w,
-              height: 48.h,
+              padding: .all(AppSize.sp(16)),
+              width: AppSize.w(48),
+              height: AppSize.h(48),
               decoration: BoxDecoration(
                 shape: .circle,
-                color: Color(0xFF282828),
-                border: Border.all(color: Color(0xFF6E6E6E), width: 1.0.w),
+                color: theme.colorScheme.primaryContainer,
+                border: Border.all(
+                  color: Color(0xFFD1DAD6),
+                  width: AppSize.w(1.0),
+                ),
               ),
               child: SvgPicture.asset(
                 AssetsManager.imagesIconsArrowForward,
-                width: 24.w,
-                height: 24.h,
+                width: AppSize.w(24),
+                height: AppSize.h(24),
+                colorFilter: ColorFilter.mode(
+                  theme.brightness == .light ?  
+                  Color(0xFF3A4640) : Color(0xFFC6C6C6), .srcIn),
               ),
             ),
           ),

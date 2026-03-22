@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 import 'widgets/completed_tasks_body.dart';
 
 class CompletedTasks extends StatefulWidget {
@@ -35,7 +35,7 @@ class _CompletedTasksState extends State<CompletedTasks> {
         title: Text(
           'المهمات المكتملة',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontSize: 20.sp,
+            fontSize: AppSize.sp(20),
             fontWeight: FontWeight.bold,
             fontFamily: AppFonts.cairoFontFamily,
           ),

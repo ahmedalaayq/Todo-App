@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/home/views/widgets/tasks_list.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 
 class HighPriority extends StatefulWidget {
   const HighPriority({
@@ -29,14 +29,14 @@ class _HighPriorityState extends State<HighPriority> {
           'المهمات ذات الأولوية القصوى',
           style: Theme.of(
             context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: .bold,fontSize: 18.sp),
+          ).textTheme.titleLarge?.copyWith(fontWeight: .bold,fontSize: AppSize.sp(18)),
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2.0.w),
+        padding: EdgeInsets.symmetric(horizontal: AppSize.w(2.0)),
         child: Column(
           children: [
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSize.h(24)),
             Expanded(
               child: TasksList(
                 removeTask: widget.removeTask,

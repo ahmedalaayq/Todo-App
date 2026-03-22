@@ -2,13 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
+import 'package:todo_app/core/theme/theme_manager.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 import 'package:todo_app/core/utils/utils.dart';
 
 class HomeToolBar extends StatefulWidget {
@@ -45,8 +44,12 @@ class _HomeToolBarState extends State<HomeToolBar> {
         Expanded(
           child: Row(
             children: [
-              Image.asset(AssetsManager.imagesAhmed, width: 42.w, height: 42.h),
-              SizedBox(width: 8.w),
+              Image.asset(
+                AssetsManager.imagesAhmed,
+                width: AppSize.w(42),
+                height: AppSize.h(42),
+              ),
+              SizedBox(width: AppSize.w(8)),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,25 +60,15 @@ class _HomeToolBarState extends State<HomeToolBar> {
                         overflow: .ellipsis,
                         maxLines: 1,
                         '${setGreetingMessage12Hour()}, ${userName.capitalizeEachWord}',
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              fontFamily: GoogleFonts.cairo().fontFamily,
-
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
+                        style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: AppSize.h(2)),
                     Text(
                       overflow: .ellipsis,
                       maxLines: 1,
                       'حارب لأجل حلمك',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.white70,
-                        fontFamily: GoogleFonts.cairo().fontFamily,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -83,105 +76,114 @@ class _HomeToolBarState extends State<HomeToolBar> {
             ],
           ),
         ),
-        Material(
-          child: InkWell(
-            overlayColor: .all(Color(0xFF282828)),
-            splashColor: Color(0xFF282828),
-            borderRadius: .circular(50),
-            onTap: () {},
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              padding: .all(8),
-              decoration: BoxDecoration(
-                color: Color(0xFF282828),
-                shape: .circle,
-              ),
-              child: SvgPicture.asset(AssetsManager.imagesSun),
-            ),
-          ),
-        ),
-
-        AbsorbPointer(
-          absorbing: isLoading,
-          child: Material(
+        ValueListenableBuilder(
+          valueListenable: ThemeManager.themeNotifier,
+          builder: (context, updatedValue, _) => Material(
             child: InkWell(
               overlayColor: .all(Color(0xFF282828)),
               splashColor: Color(0xFF282828),
               borderRadius: .circular(50),
               onTap: () async {
-                isLoading = true;
-                setState(() {});
-                if (isEmptyTasks) {
-                  isLoading = false;
-                  return AnimatedSnackBar.material(
-                    borderRadius: BorderRadius.circular(20.r),
-                    animationDuration: const Duration(milliseconds: 700),
-                    duration: const Duration(milliseconds: 3000),
-                    animationCurve: Curves.easeInOut,
-                    mobileSnackBarPosition: MobileSnackBarPosition.top,
-                    'تعذر تنفيذ الإجراء تأكد من اضافة المهام قبل المحاولة',
-                    type: AnimatedSnackBarType.error,
-                  ).show(context);
-                }
-                setState(() {});
+                await ThemeManager.toggleTheme();
+              },
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: .all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  shape: .circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    updatedValue == ThemeMode.dark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: updatedValue == ThemeMode.dark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
 
-                final allDone = widget.tasks.every((e) => e.isDone);
-
-                final confirm = await showDialog<bool>(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return _showAcceptDialog(allDone, context);
-                  },
-                );
-
-                /// لو المستخدم ضغط إلغاء
-                if (confirm != true) return;
-
-                /// تنفيذ العملية
-                for (var task in widget.tasks) {
-                  task.isDone = !allDone;
-                }
-
-                final prefs = await SharedPreferences.getInstance();
-                final jsonTasks = widget.tasks.map((e) => e.toJson()).toList();
-                await prefs.setString('tasks', jsonEncode(jsonTasks));
-
-                widget.refreshTasks();
-
-                /// Snackbar
-                AnimatedSnackBar.material(
-                  borderRadius: BorderRadius.circular(20.r),
+        Material(
+          child: InkWell(
+            overlayColor: .all(Color(0xFF282828)),
+            splashColor: Color(0xFF282828),
+            borderRadius: .circular(50),
+            onTap: () async {
+              isLoading = true;
+              setState(() {});
+              if (isEmptyTasks) {
+                isLoading = false;
+                return AnimatedSnackBar.material(
+                  borderRadius: BorderRadius.circular(AppSize.r(20)),
                   animationDuration: const Duration(milliseconds: 700),
                   duration: const Duration(milliseconds: 3000),
                   animationCurve: Curves.easeInOut,
                   mobileSnackBarPosition: MobileSnackBarPosition.top,
-                  !allDone
-                      ? 'تم تنفيذ جميع المهمات'
-                      : 'تم الغاء تنفيذ جميع المهمات',
-                  type: !allDone
-                      ? AnimatedSnackBarType.success
-                      : AnimatedSnackBarType.error,
+                  'تعذر تنفيذ الإجراء تأكد من اضافة المهام قبل المحاولة',
+                  type: AnimatedSnackBarType.error,
                 ).show(context);
-              },
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
-                padding: .all(4),
-                decoration: BoxDecoration(
-                  color: isEmptyTasks == true
-                      ? Color(0xFFFF4444)
-                      : Color(0xFF15B86C),
+              }
+              setState(() {});
 
-                  shape: .circle,
-                ),
-                child: Icon(
-                  isEmptyTasks
-                      ? Icons.error_outline
-                      : !widget.tasks.every((e) => e.isDone)
-                      ? Icons.check_circle_outline
-                      : Icons.check_circle,
-                  color: Color(0xFFFFFFFF),
-                ),
+              final allDone = widget.tasks.every((e) => e.isDone);
+
+              final confirm = await showDialog<bool>(
+                context: context,
+                barrierDismissible: true,
+                builder: (context) {
+                  return _showAcceptDialog(allDone, context);
+                },
+              );
+
+              if (confirm != true) return;
+
+              for (var task in widget.tasks) {
+                task.isDone = !allDone;
+              }
+
+              final prefs = await SharedPreferences.getInstance();
+              final jsonTasks = widget.tasks.map((e) => e.toJson()).toList();
+              await prefs.setString('tasks', jsonEncode(jsonTasks));
+
+              widget.refreshTasks();
+
+              /// Snackbar
+              AnimatedSnackBar.material(
+                borderRadius: BorderRadius.circular(AppSize.r(20)),
+                animationDuration: const Duration(milliseconds: 700),
+                duration: const Duration(milliseconds: 3000),
+                animationCurve: Curves.easeInOut,
+                mobileSnackBarPosition: MobileSnackBarPosition.top,
+                !allDone
+                    ? 'تم تنفيذ جميع المهمات'
+                    : 'تم الغاء تنفيذ جميع المهمات',
+                type: !allDone
+                    ? AnimatedSnackBarType.success
+                    : AnimatedSnackBarType.error,
+              ).show(context);
+            },
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 500),
+              padding: .all(4),
+              decoration: BoxDecoration(
+                color: isEmptyTasks == true
+                    ? Color(0xFFFF4444)
+                    : Color(0xFF15B86C),
+
+                shape: .circle,
+              ),
+              child: Icon(
+                isEmptyTasks
+                    ? Icons.error_outline
+                    : !widget.tasks.every((e) => e.isDone)
+                    ? Icons.check_circle_outline
+                    : Icons.check_circle,
+                color: Color(0xFFFFFFFF),
               ),
             ),
           ),
@@ -192,20 +194,22 @@ class _HomeToolBarState extends State<HomeToolBar> {
 
   Widget _showAcceptDialog(bool allDone, BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSize.r(24)),
+      ),
       child: Padding(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(AppSize.w(20)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 70.w,
-              height: 70.w,
+              width: AppSize.w(70),
+              height: AppSize.w(70),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: allDone
-                    ? Colors.red.withOpacity(.1)
-                    : Colors.green.withOpacity(.1),
+                    ? Colors.red.withValues(alpha: 0.1)
+                    : Colors.green.withValues(alpha: 0.1),
               ),
               child: Icon(
                 allDone ? Icons.undo : Icons.done_all,
@@ -214,7 +218,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
               ),
             ),
 
-            SizedBox(height: 16.h),
+            SizedBox(height: AppSize.h(16)),
 
             Text(
               allDone ? "إلغاء تنفيذ جميع المهام" : "تنفيذ جميع المهام",
@@ -223,7 +227,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
               ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
             ),
 
-            SizedBox(height: 8.h),
+            SizedBox(height: AppSize.h(8)),
 
             Text(
               allDone
@@ -233,7 +237,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
 
-            SizedBox(height: 24.h),
+            SizedBox(height: AppSize.h(24)),
 
             Row(
               children: [
@@ -241,7 +245,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
+                        borderRadius: BorderRadius.circular(AppSize.r(14)),
                       ),
                     ),
                     onPressed: () {
@@ -250,14 +254,14 @@ class _HomeToolBarState extends State<HomeToolBar> {
                     child: Text(
                       "إلغاء",
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: AppSize.sp(14),
                         fontWeight: .bold,
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(width: 12.w),
+                SizedBox(width: AppSize.w(12)),
 
                 Expanded(
                   child: ElevatedButton(
@@ -266,7 +270,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
                           ? Color(0xFFFF4444)
                           : Colors.green.withValues(alpha: 0.5),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
+                        borderRadius: BorderRadius.circular(AppSize.r(14)),
                       ),
                     ),
                     onPressed: () {
@@ -275,7 +279,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
                     child: Text(
                       "تأكيد",
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: AppSize.sp(14),
                         fontWeight: .bold,
                       ),
                     ),

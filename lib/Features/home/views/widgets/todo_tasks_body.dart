@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/home/views/widgets/sliver_tasks_list.dart';
+import 'package:todo_app/core/utils/app_size.dart';
 class TodoTasksBody extends StatelessWidget {
   const TodoTasksBody({
     super.key,
@@ -24,14 +24,14 @@ class TodoTasksBody extends StatelessWidget {
                 'لا يوجد مهمات غير مكتمة',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18.sp,
+                  fontSize: AppSize.sp(18),
                 ),
               ),
             ),
           )
         else
           SliverPadding(
-            padding: EdgeInsets.only(left: 8, right: 8, bottom: 70.h, top: 20),
+            padding: EdgeInsets.only(left: 8, right: 8, bottom: AppSize.h(70), top: 20),
             sliver: SliverTasksList(
               removeTask: removeTask,
               tasks: tasks,
