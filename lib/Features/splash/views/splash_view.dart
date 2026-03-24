@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/main/views/main_view.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/theme/theme_manager.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -30,9 +31,7 @@ class _SplashViewState extends State<SplashView> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => MainView(
-        tasks: tasks,
-      )),
+      MaterialPageRoute(builder: (_) => MainView(tasks: tasks)),
     );
   }
 
@@ -44,6 +43,12 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Image.asset(AssetsManager.imagesSplash));
+    return Scaffold(
+      body: Image.asset(
+        ThemeManager.isDark
+            ? AssetsManager.imagesSplash
+            : AssetsManager.imagesIconsSplashLight,
+      ),
+    );
   }
 }
