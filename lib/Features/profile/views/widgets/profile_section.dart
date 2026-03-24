@@ -7,10 +7,8 @@ import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/router/app_routes.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
-import 'package:todo_app/core/theme/dark_theme.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/core/utils/app_size.dart';
-import 'package:todo_app/main.dart';
 
 class ProfileSection extends StatefulWidget {
   const ProfileSection({
