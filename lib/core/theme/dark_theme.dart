@@ -3,6 +3,7 @@ import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 ThemeData darkTheme = ThemeData(
+  scaffoldBackgroundColor: Color(0xFF181818),
   useMaterial3: true,
   switchTheme: SwitchThemeData(
     trackColor: .resolveWith((states) {
@@ -70,13 +71,13 @@ ThemeData darkTheme = ThemeData(
       fontWeight: .w400,
       fontFamily: AppFonts.cairoFontFamily,
     ),
-      bodyLarge:  TextStyle(
+    bodyLarge: TextStyle(
       fontSize: AppSize.sp(16),
       color: Color(0xFFFFFCFC),
       fontWeight: .w400,
       fontFamily: AppFonts.cairoFontFamily,
     ),
-    bodyMedium:  TextStyle(
+    bodyMedium: TextStyle(
       fontSize: AppSize.sp(14),
       color: Color(0xFFC6C6C6),
       fontWeight: .w400,
@@ -98,11 +99,26 @@ ThemeData darkTheme = ThemeData(
     selectionHandleColor: Color(0xFF15B86C),
     selectionColor: Color(0xFF15B86C).withValues(alpha: 0.15),
   ),
-    colorScheme: ColorScheme.dark(
+  colorScheme: ColorScheme.dark(
     primaryContainer: Color(0xFF282828),
-secondaryContainer: Color(0xFF282828)
-
-  )
+    secondaryContainer: Color(0xFF282828),
+  ),
+  popupMenuTheme: PopupMenuThemeData(
+    color: Color(0xFF181818),
+    labelTextStyle: .all(
+      TextStyle(fontSize: AppSize.sp(14), color: Color(0xFFFFFCFC)),
+    ),
+    elevation: 2,
+    shadowColor: Color(0xFF15B86C),
+    shape: RoundedRectangleBorder(
+      side: BorderSide(
+        color: Color(0xFF15B86C),
+        width: 1.0
+      ),
+      borderRadius: .circular(AppSize.r(16))),
+    enableFeedback: true,
+  ),
+  iconTheme: IconThemeData(color: Color(0xFFFFFCFC)),
 );
 
 OutlineInputBorder _buildFieldBorder({Color? color, double? width}) {

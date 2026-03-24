@@ -3,6 +3,7 @@ import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 ThemeData lightTheme = ThemeData(
+  scaffoldBackgroundColor: Color(0xFFF6F7F9),
   useMaterial3: true,
   brightness: .light,
   switchTheme: SwitchThemeData(
@@ -71,13 +72,13 @@ ThemeData lightTheme = ThemeData(
       fontWeight: .w400,
       fontFamily: AppFonts.cairoFontFamily,
     ),
-    bodyLarge:  TextStyle(
+    bodyLarge: TextStyle(
       fontSize: AppSize.sp(16),
       color: Color(0xFF161F1B),
       fontWeight: .w400,
       fontFamily: AppFonts.cairoFontFamily,
     ),
-    bodyMedium:  TextStyle(
+    bodyMedium: TextStyle(
       fontSize: AppSize.sp(14),
       color: Color(0xFF3A4640),
       fontWeight: .w400,
@@ -101,8 +102,19 @@ ThemeData lightTheme = ThemeData(
   ),
   colorScheme: ColorScheme.light(
     primaryContainer: Color(0xFFFFFFFF),
-secondaryContainer: Color(0xFFFFFFFF)
-  )
+    secondaryContainer: Color(0xFFFFFFFF),
+  ),
+
+  popupMenuTheme: PopupMenuThemeData(
+    color: Color(0xFFF6F7F9),
+    labelTextStyle: .all(
+      TextStyle(fontSize: AppSize.sp(14), color: Color(0xFF161F1B)),
+    ),
+    elevation: 2,
+    shadowColor: Color(0xFF15B86C),
+    enableFeedback: true,
+  ),
+  iconTheme: IconThemeData(color: Color(0xFF161F1B)),
 );
 OutlineInputBorder _buildFieldBorder({Color? color, double? width}) {
   return OutlineInputBorder(
