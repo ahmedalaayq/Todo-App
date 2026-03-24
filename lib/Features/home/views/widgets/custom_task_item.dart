@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/enums/task_item_actions_enum.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
@@ -84,22 +85,25 @@ class CustomTaskItem extends StatelessWidget {
                   ],
                 ),
               ),
-              PopupMenuButton<String>(
+              PopupMenuButton<TaskItemActionEnum>(
                 icon: const Icon(Icons.more_vert, color: Colors.white),
                 onSelected: (value) {
-                  if (value == "check") {
+                  if (value == TaskItemActionEnum.check) {
                     checkCard(task, !task.isDone);
-                  } else if (value == "remove") {
+                  } else if (value == TaskItemActionEnum.remove) {
                     removeTask(task.id);
                   }
                 },
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: "check",
-                    child: Text(task.isDone ? "Uncheck" : "Check"),
-                  ),
-                  const PopupMenuItem(value: "remove", child: Text("Remove")),
-                ],
+                itemBuilder: (_) => TaskItemActionEnum.values.map((e) {
+                  return PopupMenuItem<TaskItemActionEnum>(
+                    value: e,
+                    child: Text(
+                      e == TaskItemActionEnum.check
+                          ? (task.isDone ? 'UnChecked' : 'Checked')
+                          : e.name.capitalizeEachWord,
+                    ),
+                  );
+                }).toList(),
               ),
             ],
           ),
