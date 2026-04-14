@@ -28,11 +28,13 @@ class HomeToolBar extends StatelessWidget {
                 children: [
                   value.userImagePath.isNotEmpty
                       ? Image.file(
+                        fit: .contain,
                           File(value.userImagePath),
                           width: AppSize.w(42),
                           height: AppSize.h(42),
                         )
                       : Image.asset(
+                        fit: .contain,
                           AssetsManager.imagesAhmed,
                           width: AppSize.w(42),
                           height: AppSize.h(42),
@@ -68,14 +70,18 @@ class HomeToolBar extends StatelessWidget {
               builder: (context, theme, _) {
                 final controller = context.read<ThemeManager>();
                 return Material(
-                  child: InkWell(
+                  
+                  type: .transparency,
+                  child: InkResponse(
+                    radius: 28,
+                    highlightShape: .circle,
                     hoverColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     overlayColor: .all(
-                      theme.isDark ? Color(0xFF282828) : Color(0xFFFFFFFF),
+                      Colors.transparent
                     ),
-                    splashColor: Color(0xFF282828),
+                    splashColor: Colors.transparent,
                     borderRadius: .circular(50),
                     onTap: () async {
                       await controller.toggleTheme();
@@ -84,7 +90,12 @@ class HomeToolBar extends StatelessWidget {
                       duration: Duration(milliseconds: 500),
                       padding: .all(8),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        border: Border.all(
+                          color: Colors.grey.shade400
+                          ,width: 1.5
+                        ),
+                        color: Colors.transparent,
+                        // color: Theme.of(context).colorScheme.secondaryContainer,
                         shape: .circle,
                       ),
                       child: Center(
