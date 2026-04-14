@@ -17,10 +17,9 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final prefs = await SharedPreferences.getInstance();
-  final welcomeSeen = prefs.getBool(StorageKey.welcome) ?? false;
 
   await PreferenceManager.init();
+  final welcomeSeen = PreferenceManager.getData<bool?>(StorageKey.welcome) ?? false;
   runApp(
     MultiProvider(
       providers: [

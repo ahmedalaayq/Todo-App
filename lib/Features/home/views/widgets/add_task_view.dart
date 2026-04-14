@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/shared/shared_text_form_field.dart';
 import 'package:todo_app/core/utils/app_size.dart';
@@ -57,9 +58,8 @@ class _AddTaskViewState extends State<AddTaskView> {
         isHighPriority: highPriorityTask,
       );
 
-      final pref = await SharedPreferences.getInstance();
       // load prev tasks
-      final String? taskJson = pref.getString('tasks');
+      final String? taskJson = PreferenceManager.getData<String?>('tasks');
       setState(() {
         if (taskJson != null) {
           final taskListJson = jsonDecode(taskJson) as List<dynamic>;
@@ -77,7 +77,7 @@ class _AddTaskViewState extends State<AddTaskView> {
         final taskEncode = jsonEncode(tasksListEncoder);
         // log('tasksList After jsonEncode: $taskEncode');
         // log('---------------------------------------\n');
-        pref.setString('tasks', taskEncode);
+        PreferenceManager.setData<String?>('tasks', taskEncode);
 
         if (!mounted) return;
         Navigator.pop(context, true);

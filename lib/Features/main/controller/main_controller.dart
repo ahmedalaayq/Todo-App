@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/datasource/storage_key.dart';
@@ -18,17 +17,16 @@ class MainController with ChangeNotifier {
 
   List<Task> tasks = [];
 
-  Future<void> init() async {
-    await Future.wait([
-      loadTasks(),
-      fetchUserData(),
-    ]);
+  void init() {
+    loadTasks();
+    fetchUserData();
   }
 
-  Future<void> fetchUserData() async {
-
-    userName = PreferenceManager.getData<String?>(StorageKey.username) ?? "Guest";
-    motivationQuote = PreferenceManager.getData<String?>(StorageKey.motivationQuote) ?? "";
+  void fetchUserData() {
+    userName =
+        PreferenceManager.getData<String?>(StorageKey.username) ?? "Guest";
+    motivationQuote =
+        PreferenceManager.getData<String?>(StorageKey.motivationQuote) ?? "";
     welcomeSeen = PreferenceManager.getData<bool?>(StorageKey.welcome) ?? false;
     userImagePath =
         PreferenceManager.getData<String?>(StorageKey.userImagePath) ?? "";
@@ -42,10 +40,7 @@ class MainController with ChangeNotifier {
   Future<void> updateUserImage(String path) async {
     userImagePath = path;
 
-    await PreferenceManager.setData<String>(
-      StorageKey.userImagePath,
-      path,
-    );
+    await PreferenceManager.setData<String>(StorageKey.userImagePath, path);
 
     notifyListeners();
   }
@@ -54,17 +49,14 @@ class MainController with ChangeNotifier {
     userName = name;
     motivationQuote = quote;
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(StorageKey.username, name);
-    await prefs.setString(StorageKey.motivationQuote, quote);
+    await PreferenceManager.setData<String?>(StorageKey.username, name);
+    await PreferenceManager.setData<String?>(StorageKey.motivationQuote, quote);
 
     notifyListeners();
   }
 
-  /// 🚀 TASKS
-  Future<void> loadTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-    final taskJson = prefs.getString(StorageKey.tasks);
+  void loadTasks() {
+    final taskJson = PreferenceManager.getData<String?>(StorageKey.tasks);
 
     if (taskJson != null) {
       final list = jsonDecode(taskJson) as List<dynamic>;
@@ -80,11 +72,9 @@ class MainController with ChangeNotifier {
   }
 
   Future<void> _saveTasks() async {
-    final prefs = await SharedPreferences.getInstance();
-
     final jsonTasks = tasks.map((e) => e.toJson()).toList();
 
-    await prefs.setString(
+    await PreferenceManager.setData<String?>(
       StorageKey.tasks,
       jsonEncode(jsonTasks),
     );
@@ -99,9 +89,9 @@ class MainController with ChangeNotifier {
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Task removed")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Task removed")));
   }
 
   void onTransition(int index) {
