@@ -1,99 +1,86 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:todo_app/Features/home/models/task.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
-class AchievedTasksItem extends StatefulWidget {
-  const AchievedTasksItem({super.key, required this.tasks});
-  final List<Task> tasks;
-
-  @override
-  State<AchievedTasksItem> createState() => _AchievedTasksItemState();
-}
-
-class _AchievedTasksItemState extends State<AchievedTasksItem> {
-  double value = 0.0;
-
-  Color getValueColor() {
-    if (value >= 0.8) {
-      return const Color(0xFF22C55E);
-    }
-    if (value >= 0.6) {
-      return const Color(0xFFFACC15);
-    }
-    if (value >= 0.4) {
-      return const Color(0xFFFB923C);
-    }
-    return const Color(0xFFEF4444);
-  }
-
+class AchievedTasksItem extends StatelessWidget {
+  const AchievedTasksItem({super.key});
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final doneTasks = widget.tasks.where((e) => e.isDone == true).length;
-    final totalTasks = widget.tasks.length;
 
-    if (totalTasks != 0) {
-      value = doneTasks / totalTasks;
-    }
-    return Container(
-      padding: .all(12),
-      decoration: BoxDecoration(
-        borderRadius: .circular(AppSize.r(20)),
-        color: Theme.of(context).colorScheme.primaryContainer,
-        border: theme.brightness == .light
-            ? Border.all(color: Color(0xFFD1DAD6), width: AppSize.w(1))
-            : null,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: .start,
-              children: [
-                Text(
-                  'المهمات المنجزة',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(fontWeight: .bold),
-                ),
-                Text(
-                  '$doneTasks من $totalTasks منجزة',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
-                ),
-              ],
-            ),
+    return Consumer<MainController>(
+      builder: (BuildContext context, MainController value, Widget? child) {
+        final tasksList = value.tasks;
+        final controller = context.read<MainController>();
+        final doneTasks = tasksList.where((e) => e.isDone == true).length;
+        final totalTasks = tasksList.length;
+        if (totalTasks != 0) {
+          value.indicatorValue = doneTasks / totalTasks;
+        }
+        return Container(
+          padding: .all(12),
+          decoration: BoxDecoration(
+            borderRadius: .circular(AppSize.r(20)),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            border: theme.brightness == .light
+                ? Border.all(color: Color(0xFFD1DAD6), width: AppSize.w(1))
+                : null,
           ),
-          Stack(
-            alignment: Alignment.center,
+          child: Row(
             children: [
-              SizedBox(
-                height: 55,
-                width: 55,
-                child: Transform.rotate(
-                  angle: -pi / 2,
-                  child: CircularProgressIndicator(
-                    value: value,
-                    strokeWidth: 4,
-                    backgroundColor: Colors.grey.shade700,
-                    valueColor: AlwaysStoppedAnimation(getValueColor()),
-                  ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: .start,
+                  children: [
+                    Text(
+                      'المهمات المنجزة',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyLarge?.copyWith(fontWeight: .bold),
+                    ),
+                    Text(
+                      '$doneTasks من $totalTasks منجزة',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
+                    ),
+                  ],
                 ),
               ),
-              FittedBox(
-                child: Text(
-                  "${(value * 100).toInt()}%",
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
-                ),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    height: 55,
+                    width: 55,
+                    child: Transform.rotate(
+                      angle: -pi / 2,
+                      child: CircularProgressIndicator(
+                        value: value.indicatorValue,
+                        strokeWidth: 4,
+                        backgroundColor: Colors.grey.shade700,
+                        valueColor: AlwaysStoppedAnimation(
+                          controller.getIndicatorColor(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  FittedBox(
+                    child: Text(
+                      "${(value.indicatorValue * 100).toInt()}%",
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(fontWeight: .bold),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

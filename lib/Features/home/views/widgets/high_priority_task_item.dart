@@ -85,9 +85,12 @@ class HighPriorityTaskItem extends StatelessWidget {
                 splashFactory: NoSplash.splashFactory,
                 overlayColor: .all(Colors.transparent),
                 onTap: () async {
-                  await context.push(ChangeNotifierProvider.value(
-                    value: MainController()..loadTasks(),
-                    child: HighPriority()));
+                  await context.push(
+                    ChangeNotifierProvider.value(
+                      value: MainController()..loadTasks(),
+                      child: HighPriority(),
+                    ),
+                  );
                   controller.loadTasks();
                 },
                 child: Container(

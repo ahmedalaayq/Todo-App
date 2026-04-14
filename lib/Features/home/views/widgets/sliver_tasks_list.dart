@@ -1,36 +1,30 @@
 import 'package:flutter/material.dart';
-
-import '../../models/task.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'custom_task_item.dart';
 
 class SliverTasksList extends StatelessWidget {
-  const SliverTasksList({
-    super.key,
-    required this.removeTask,
-    required this.tasks,
-    required this.checkCard, required this.onEdit,
-  });
-
-  final Function(String id) removeTask;
-  final List<Task> tasks;
-  final Function(Task task, bool value) checkCard;
-  final VoidCallback onEdit;
+  const SliverTasksList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        return Padding(
-          padding: .symmetric(horizontal: 8),
-          child: CustomTaskItem(
-            onEdit: onEdit,
-            removeTask: removeTask,
-            task: tasks[index],
-            index: index,
-            checkCard: checkCard,
-          ),
+    return Selector<MainController, List<Task>>(
+      builder: (context, tasksList, _) {
+        return SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Padding(
+              padding: .symmetric(horizontal: 8),
+              child: CustomTaskItem(
+                index: index,
+              ),
+            );
+          }, childCount: tasksList.length),
         );
-      }, childCount: tasks.length),
+      },
+      selector: (BuildContext p1, MainController controller) {
+        return controller.tasks;
+      },
     );
   }
 }

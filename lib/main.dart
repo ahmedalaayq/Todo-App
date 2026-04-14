@@ -54,7 +54,6 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Todo',
 
-          /// 🌍 Localization
           locale: const Locale('ar'),
           supportedLocales: S.delegate.supportedLocales,
           localizationsDelegates: const [
@@ -64,12 +63,10 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
 
-          /// 🎨 Theme
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: theme.themeMode,
 
-          /// 🚦 Routing
           onGenerateRoute: onGenerateRoute,
           initialRoute: welcomeSeen
               ? AppRoutes.splashView

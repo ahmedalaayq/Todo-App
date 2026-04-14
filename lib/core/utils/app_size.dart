@@ -8,10 +8,3 @@ class AppSize {
   static double dm(double size) => ScreenUtil().diameter(size);
   static double sp(double size) => ScreenUtil().setSp(size);
 }
-
-
-
-/*
-original design FontSize.sp 
-
- */

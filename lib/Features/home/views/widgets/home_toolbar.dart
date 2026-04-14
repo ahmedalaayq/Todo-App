@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
@@ -26,17 +26,17 @@ class HomeToolBar extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-            value.userImagePath.isNotEmpty
-    ? Image.file(
-        File(value.userImagePath),
-        width: AppSize.w(42),
-        height: AppSize.h(42),
-      )
-    : Image.asset(
-        AssetsManager.imagesAhmed,
-        width: AppSize.w(42),
-        height: AppSize.h(42),
-      ),
+                  value.userImagePath.isNotEmpty
+                      ? Image.file(
+                          File(value.userImagePath),
+                          width: AppSize.w(42),
+                          height: AppSize.h(42),
+                        )
+                      : Image.asset(
+                          AssetsManager.imagesAhmed,
+                          width: AppSize.w(42),
+                          height: AppSize.h(42),
+                        ),
                   SizedBox(width: AppSize.w(8)),
                   Expanded(
                     child: Column(
@@ -109,9 +109,7 @@ class HomeToolBar extends StatelessWidget {
                 splashColor: Color(0xFF282828),
                 borderRadius: .circular(50),
                 onTap: () async {
-                  value.isLoading = true;
                   if (isEmptyTasks) {
-                    value.isLoading = false;
                     return AnimatedSnackBar.material(
                       borderRadius: BorderRadius.circular(AppSize.r(20)),
                       animationDuration: const Duration(milliseconds: 700),
@@ -139,9 +137,8 @@ class HomeToolBar extends StatelessWidget {
                     task.isDone = !allDone;
                   }
 
-                  final prefs = await SharedPreferences.getInstance();
                   final jsonTasks = value.tasks.map((e) => e.toJson()).toList();
-                  await prefs.setString(
+                  await PreferenceManager.setData<String?>(
                     StorageKey.tasks,
                     jsonEncode(jsonTasks),
                   );

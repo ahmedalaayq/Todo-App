@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/Features/profile/views/widgets/custom_image_item.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class ProfileAvatar extends StatefulWidget {
@@ -17,13 +19,11 @@ class ProfileAvatar extends StatefulWidget {
 }
 
 class _ProfileAvatarState extends State<ProfileAvatar> {
-  final ValueNotifier<XFile?> _pickedImageNotifier =
-      ValueNotifier(null);
+  final ValueNotifier<XFile?> _pickedImageNotifier = ValueNotifier(null);
 
   Future<XFile?> pickImage(ImageSource source) async {
     try {
-      final image =
-          await ImagePicker().pickImage(source: source);
+      final image = await ImagePicker().pickImage(source: source);
 
       if (image != null) {
         _pickedImageNotifier.value = image;
@@ -55,23 +55,19 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
                   if (pickedImage != null) {
                     return CircleAvatar(
                       radius: AppSize.r(50),
-                      backgroundImage:
-                          FileImage(File(pickedImage.path)),
+                      backgroundImage: FileImage(File(pickedImage.path)),
                     );
                   } else if (main.userImagePath.isNotEmpty) {
                     return CircleAvatar(
                       radius: AppSize.r(50),
-                      backgroundImage: FileImage(
-                        File(main.userImagePath),
-                      ),
+                      backgroundImage: FileImage(File(main.userImagePath)),
                     );
                   } else {
                     return CircleAvatar(
                       radius: AppSize.r(50),
-                      backgroundImage:
-                          const AssetImage(
-                            AssetsManager.imagesAhmed,
-                          ),
+                      backgroundImage: const AssetImage(
+                        AssetsManager.imagesAhmed,
+                      ),
                     );
                   }
                 },
@@ -87,9 +83,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primaryContainer,
+                      color: Theme.of(context).colorScheme.primaryContainer,
                     ),
                     child: Icon(
                       Icons.camera_alt_outlined,
@@ -122,16 +116,13 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
     try {
       final main = context.read<MainController>();
 
-      final dir =
-          await getApplicationDocumentsDirectory();
+      final dir = await getApplicationDocumentsDirectory();
 
       final originalFile = File(file.path);
 
-      final path =
-          '${dir.path}/${file.name}';
+      final path = '${dir.path}/${file.name}';
 
-      final copiedFile =
-          await originalFile.copy(path);
+      final copiedFile = await originalFile.copy(path);
 
       main.updateUserImage(copiedFile.path);
 

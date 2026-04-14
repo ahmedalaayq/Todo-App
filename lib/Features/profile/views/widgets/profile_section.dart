@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/Features/profile/views/user_details_view.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
@@ -21,6 +20,7 @@ class ProfileSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: AppSize.h(16)),
         Text(
           'البيانات الشخصية',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -31,7 +31,6 @@ class ProfileSection extends StatelessWidget {
 
         const SizedBox(height: 8),
 
-        /// ================= USER DETAILS =================
         _buildListTile(
           context,
           title: 'معلومات المستخدم',

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:todo_app/Features/home/models/task.dart';
-import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 import 'widgets/completed_tasks_body.dart';
@@ -25,16 +22,7 @@ class CompletedTasks extends StatelessWidget {
           ),
         ),
       ),
-      body: Consumer<MainController>(
-        builder: (BuildContext context, value, Widget? child) {
-          final controller = context.read<MainController>();
-          return CompletedTasksBody(
-            onEdit: controller.loadTasks,
-            tasks: value.tasks.where((e) => e.isDone).toList(),
-            checkCard: controller.checkTask,
-            removeTask: (String id) {},
-          );
-        },
+      body: CompletedTasksBody(
       ),
     );
   }

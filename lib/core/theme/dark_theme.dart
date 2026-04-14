@@ -5,7 +5,15 @@ import 'package:todo_app/core/utils/app_size.dart';
 ThemeData darkTheme = ThemeData(
   scaffoldBackgroundColor: Color(0xFF181818),
   useMaterial3: true,
-  switchTheme: SwitchThemeData(
+  appBarTheme: AppBarTheme(
+    backgroundColor: Color(0xFF181818),
+    titleTextStyle: TextStyle(
+      fontSize: AppSize.sp(24),
+      color: Color(0xFFC6C6C6),
+      fontWeight: .w400,
+      fontFamily: AppFonts.cairoFontFamily,
+    ),
+  ),  switchTheme: SwitchThemeData(
     trackColor: .resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
         return const Color(0xFF15B86C);
@@ -111,11 +119,9 @@ ThemeData darkTheme = ThemeData(
     elevation: 2,
     shadowColor: Color(0xFF15B86C),
     shape: RoundedRectangleBorder(
-      side: BorderSide(
-        color: Color(0xFF15B86C),
-        width: 1.0
-      ),
-      borderRadius: .circular(AppSize.r(16))),
+      side: BorderSide(color: Color(0xFF15B86C), width: 1.0),
+      borderRadius: .circular(AppSize.r(16)),
+    ),
     enableFeedback: true,
   ),
   iconTheme: IconThemeData(color: Color(0xFFFFFCFC)),

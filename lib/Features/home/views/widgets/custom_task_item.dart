@@ -1,27 +1,16 @@
-
 import 'package:flutter/material.dart';
-import 'package:todo_app/Features/home/models/task.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/views/widgets/edit_task_widget.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/enums/task_item_actions_enum.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 import 'task_id_card.dart';
 
 class CustomTaskItem extends StatefulWidget {
-  const CustomTaskItem({
-    super.key,
-    required this.task,
-    required this.index,
-    required this.checkCard,
-    required this.removeTask,
-    required this.onEdit,
-  });
+  const CustomTaskItem({super.key, required this.index});
 
-  final Task task;
   final int index;
-  final Function(Task task, bool value) checkCard;
-  final Function(String id) removeTask;
-  final VoidCallback onEdit;
 
   @override
   State<CustomTaskItem> createState() => _CustomTaskItemState();
@@ -63,109 +52,137 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        splashFactory: NoSplash.splashFactory,
-        overlayColor: WidgetStateProperty.all(Colors.transparent),
-        onTap: () => widget.checkCard(widget.task, !widget.task.isDone),
-        child: Container(
-          margin: EdgeInsets.only(bottom: AppSize.h(8)),
-          padding: EdgeInsets.all(AppSize.w(8)),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
-            borderRadius: BorderRadius.circular(AppSize.r(20)),
-            border: theme.brightness == Brightness.light
-                ? Border.all(
-                    color: const Color(0xFFD1DAD6),
-                    width: AppSize.w(1),
-                  )
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: widget.task.isDone,
-                      checkColor: Colors.white,
-                      activeColor: const Color(0xFF15B86C),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSize.r(4)),
-                      ),
-                      onChanged: (value) =>
-                          widget.checkCard(widget.task, value ?? false),
-                    ),
-                    SizedBox(width: AppSize.w(8)),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.task.taskName.capitalizeEachWord,
-                            style: Theme.of(context).textTheme.bodyLarge
-                                ?.copyWith(
-                                  decoration: widget.task.isDone
-                                      ? TextDecoration.lineThrough
-                                      : null,
-                                ),
+    return Consumer<MainController>(
+      builder: (BuildContext context, MainController value, _) {
+        final controller = context.read<MainController>();
+        final tasksList = value.tasks;
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStateProperty.all(Colors.transparent),
+            onTap: () => controller.checkTask(
+              tasksList[widget.index],
+              !tasksList[widget.index].isDone,
+            ),
+            child: Container(
+              margin: EdgeInsets.only(bottom: AppSize.h(8)),
+              padding: EdgeInsets.all(AppSize.w(8)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                borderRadius: BorderRadius.circular(AppSize.r(20)),
+                border: theme.brightness == Brightness.light
+                    ? Border.all(
+                        color: const Color(0xFFD1DAD6),
+                        width: AppSize.w(1),
+                      )
+                    : null,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: tasksList[widget.index].isDone,
+                          checkColor: Colors.white,
+                          activeColor: const Color(0xFF15B86C),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AppSize.r(4)),
                           ),
-                          if (widget.task.taskDescription.isNotEmpty)
-                            Text(
-                              widget.task.taskDescription.capitalizeEachWord,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    decoration: widget.task.isDone
-                                        ? TextDecoration.lineThrough
-                                        : null,
-                                  ),
-                            ),
-                        ],
-                      ),
+                          onChanged: (value) => controller.checkTask(
+                            tasksList[widget.index],
+                            value ?? false,
+                          ),
+                        ),
+                        SizedBox(width: AppSize.w(8)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                tasksList[widget.index]
+                                    .taskName
+                                    .capitalizeEachWord,
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      decoration: tasksList[widget.index].isDone
+                                          ? TextDecoration.lineThrough
+                                          : null,
+                                    ),
+                              ),
+                              if (tasksList[widget.index]
+                                  .taskDescription
+                                  .isNotEmpty)
+                                Text(
+                                  tasksList[widget.index]
+                                      .taskDescription
+                                      .capitalizeEachWord,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(
+                                        decoration:
+                                            tasksList[widget.index].isDone
+                                            ? TextDecoration.lineThrough
+                                            : null,
+                                      ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              PopupMenuButton<TaskItemActionEnum>(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (value) async {
-                  switch (value) {
-                    case TaskItemActionEnum.check:
-                      widget.checkCard(widget.task, !widget.task.isDone);
-                      break;
-                    case TaskItemActionEnum.edit:
-                      final bool? result = await _openEditBottomSheet(context);
-                      if (result == true) {
-                        widget.onEdit();
+                  ),
+                  PopupMenuButton<TaskItemActionEnum>(
+                    icon: const Icon(Icons.more_vert),
+                    onSelected: (value) async {
+                      switch (value) {
+                        case TaskItemActionEnum.check:
+                          controller.checkTask(
+                            tasksList[widget.index],
+                            !tasksList[widget.index].isDone,
+                          );
+                          break;
+                        case TaskItemActionEnum.edit:
+                          final bool? result = await _openEditBottomSheet(
+                            context,
+                          );
+                          if (result == true) {
+                            controller.loadTasks();
+                          }
+                          break;
+                        case TaskItemActionEnum.remove:
+                          controller.removeTask(
+                            context,
+                            tasksList[widget.index].id,
+                          );
+                          break;
+                        case TaskItemActionEnum.displayId:
+                          _openShowIdDialog();
+                          break;
                       }
-                      break;
-                    case TaskItemActionEnum.remove:
-                      widget.removeTask(widget.task.id);
-                      break;
-                    case TaskItemActionEnum.displayId:
-                      _openShowIdDialog();
-                      break;
-                  }
-                },
-                itemBuilder: (_) => TaskItemActionEnum.values.map((e) {
-                  return PopupMenuItem<TaskItemActionEnum>(
-                    value: e,
-                    child: Text(
-                      e == TaskItemActionEnum.check
-                          ? (widget.task.isDone ? 'Unchecked' : 'Checked')
-                          : e.name.capitalizeEachWord,
-                    ),
-                  );
-                }).toList(),
+                    },
+                    itemBuilder: (_) => TaskItemActionEnum.values.map((e) {
+                      return PopupMenuItem<TaskItemActionEnum>(
+                        value: e,
+                        child: Text(
+                          e == TaskItemActionEnum.check
+                              ? (tasksList[widget.index].isDone
+                                    ? 'Unchecked'
+                                    : 'Checked')
+                              : e.name.capitalizeEachWord,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -173,6 +190,7 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
     showDialog(
       context: context,
       builder: (context) {
+        final controller = context.read<MainController>();
         final theme = Theme.of(context);
 
         return AlertDialog(
@@ -184,7 +202,10 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
           contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
           actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           title: TaskIdTitle(theme: theme),
-          content: TaskIDCard(theme: theme, taskId: widget.task.id),
+          content: TaskIDCard(
+            theme: theme,
+            taskId: controller.tasks[widget.index].id,
+          ),
           actions: [
             ElevatedButton.icon(
               onPressed: () {
@@ -214,7 +235,8 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        return EditTaskWidget(model: widget.task);
+        final controller = context.read<MainController>();
+        return EditTaskWidget(model: controller.tasks[widget.index]);
       },
     );
   }

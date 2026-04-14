@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/Features/home/views/widgets/add_task_view.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
-import 'package:todo_app/core/extensions/shared_extensions.dart';
-import 'package:todo_app/core/router/app_routes.dart' as route;
 import 'package:todo_app/core/utils/app_size.dart';
 
 import 'widgets/home_view_body.dart';
@@ -17,7 +16,6 @@ class HomeView extends StatelessWidget {
       canPop: false,
       child: Consumer<MainController>(
         builder: (BuildContext context, value, _) {
-          final controller = context.read<MainController>();
           return Scaffold(
             body: SafeArea(child: HomeViewBody()),
             floatingActionButton: ElevatedButton.icon(
@@ -37,14 +35,15 @@ class HomeView extends StatelessWidget {
                   fontFamily: GoogleFonts.cairo().fontFamily,
                 ),
               ),
-              onPressed: () async {
-                final value = await context.pushNamed(
-                  route.AppRoutes.addTaskView,
-                );
+              onPressed: () {
+                final controller = context.read<MainController>();
 
-                if (value == true) {
-                  controller.loadTasks();
-                }
+                controller.initAddTask();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AddTaskView()),
+                );
               },
             ),
           );

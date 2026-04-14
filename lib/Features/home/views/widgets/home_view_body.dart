@@ -16,7 +16,6 @@ class HomeViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<MainController>(
       builder: (BuildContext context, value, Widget? child) {
-        final controller = context.read<MainController>();
         final List<Task> highPriority = value.tasks
             .where((e) => e.isHighPriority)
             .toList();
@@ -24,19 +23,29 @@ class HomeViewBody extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           cacheExtent: 500.0,
           slivers: [
+            SliverPadding(
+              padding: .symmetric(horizontal: 16),
+              sliver: SliverAppBar(
+                automaticallyImplyLeading: false,
+                scrolledUnderElevation: 0.0,
+                elevation: .0,
+                // pinned: true,
+                snap: true,
+                floating: true,
+                flexibleSpace: HomeToolBar(),
+              ),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    HomeToolBar(),
+                    // HomeToolBar(),
                     SizedBox(height: AppSize.h(16)),
                     const HomeGreetingItem(),
                     SizedBox(height: AppSize.h(16)),
-                    value.tasks.isNotEmpty
-                        ? AchievedTasksItem(tasks: value.tasks)
-                        : SizedBox(),
+                    value.tasks.isNotEmpty ? AchievedTasksItem() : SizedBox(),
                     SizedBox(height: AppSize.h(8)),
                     highPriority.isNotEmpty
                         ? HighPriorityTaskItem()
@@ -68,12 +77,7 @@ class HomeViewBody extends StatelessWidget {
                   right: 8,
                   bottom: AppSize.h(70),
                 ),
-                sliver: SliverTasksList(
-                  removeTask: (String? id) {},
-                  tasks: value.tasks,
-                  checkCard: controller.checkTask,
-                  onEdit: controller.loadTasks,
-                ),
+                sliver: SliverTasksList(),
               ),
           ],
         );

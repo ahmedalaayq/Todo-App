@@ -25,16 +25,7 @@ class TodoTasks extends StatelessWidget {
         ),
       ),
 
-      body: Consumer<MainController>(
-        builder: (BuildContext context, MainController value, _) {
-          final controller = context.read<MainController>();
-          return TodoTasksBody(
-            onEdit: controller.loadTasks,
-            tasks: value.tasks.where((e) => !e.isDone).toList(),
-            checkCard: controller.checkTask,
-            removeTask: (String? id){},
-          );
-        },
+      body: TodoTasksBody(
       ),
     );
   }

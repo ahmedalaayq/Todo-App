@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/views/widgets/tasks_list.dart';
-import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class HighPriority extends StatelessWidget {
@@ -26,17 +24,11 @@ class HighPriority extends StatelessWidget {
           children: [
             SizedBox(height: AppSize.h(24)),
             Expanded(
-              child: Consumer<MainController>(
-                builder: (context, value, child) {
-                            final controller = context.read<MainController>();
-
-                  return TasksList(
-                    onEdit: controller.loadTasks,
-                    removeTask:(String? id){},
-                    tasks: value.tasks.where((e)=>e.isHighPriority).toList(),
-                    checkCard:controller.checkTask
-                  );
-                },
+              child: TasksList(
+                // onEdit: controller.loadTasks,
+                // removeTask:(String? id){},
+                // tasks: value.tasks.where((e)=>e.isHighPriority).toList(),
+                // checkCard:controller.checkTask
               ),
             ),
           ],

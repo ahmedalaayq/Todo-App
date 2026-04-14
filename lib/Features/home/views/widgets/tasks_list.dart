@@ -1,38 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 
 import '../../models/task.dart';
 import 'custom_task_item.dart';
 
 class TasksList extends StatelessWidget {
-  const TasksList({
-    super.key,
-    required this.removeTask,
-    required this.tasks,
-    required this.checkCard, required this.onEdit,
-  });
-
-  final Function(String id) removeTask;
-  final List<Task> tasks;
-  final Function(Task task, bool value) checkCard;
-    final VoidCallback onEdit;
-
+  const TasksList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: .symmetric(horizontal: 8),
-          child: CustomTaskItem(
-            onEdit: onEdit,
-            removeTask: removeTask,
-            task: tasks[index],
-            index: index,
-            checkCard: checkCard,
-          ),
+    return Selector<MainController, List<Task>>(
+      builder: (BuildContext context, List<Task> value, Widget? child) {
+        return ListView.builder(
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: .symmetric(horizontal: 8),
+              child: CustomTaskItem(index: index),
+            );
+          },
+          itemCount: value.length,
         );
       },
-      itemCount: tasks.length,
+      selector: (BuildContext p1, MainController controller) {
+        return controller.tasks;
+      },
     );
   }
 }

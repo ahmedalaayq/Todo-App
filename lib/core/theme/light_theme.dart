@@ -6,6 +6,15 @@ ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: Color(0xFFF6F7F9),
   useMaterial3: true,
   brightness: .light,
+  appBarTheme: AppBarTheme(
+    backgroundColor: Color(0xFFF6F7F9),
+    titleTextStyle: TextStyle(
+      fontSize: AppSize.sp(24),
+      color: Color(0xFF161F1B),
+      fontWeight: .w400,
+      fontFamily: AppFonts.cairoFontFamily,
+    ),
+  ),
   switchTheme: SwitchThemeData(
     trackColor: .resolveWith((states) {
       if (states.contains(WidgetState.selected)) {

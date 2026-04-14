@@ -106,7 +106,6 @@ class _UserDetailsViewState extends State<UserDetailsView> {
             final name = _userNameController.text.trim();
             final quote = _motivationQuoteController.text.trim();
 
-            /// 🔥 أهم نقطة: تحديث الـ state + التخزين
             await main.updateUserData(name, quote);
 
             if (!context.mounted) return;
