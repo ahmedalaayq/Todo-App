@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/views/widgets/add_task_view.dart';
+import 'package:todo_app/Features/splash/controller/splash_controller.dart';
 import 'package:todo_app/Features/splash/views/splash_view.dart';
 import 'package:todo_app/Features/welcome/views/welcome_view.dart';
 import 'package:todo_app/core/router/app_routes.dart';
@@ -10,7 +12,9 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
     case AppRoutes.welcomeView:
       return MaterialPageRoute(builder: (context) => WelcomeView());
     case AppRoutes.splashView:
-      return MaterialPageRoute(builder: (context) => SplashView());
+      return MaterialPageRoute(builder: (context) => ChangeNotifierProvider(
+        create: (context)=> SplashController(),
+        child: SplashView()));
     case AppRoutes.addTaskView:
       return MaterialPageRoute(builder: (context) => AddTaskView());
 

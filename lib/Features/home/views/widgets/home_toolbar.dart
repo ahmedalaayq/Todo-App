@@ -1,218 +1,193 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
-import 'package:todo_app/core/datasource/preference_manager.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 import 'package:todo_app/core/utils/utils.dart';
 
-class HomeToolBar extends StatefulWidget {
-  const HomeToolBar({
-    super.key,
-    required this.tasks,
-    required this.refreshTasks,
-  });
-  final List<Task> tasks;
-  final VoidCallback refreshTasks;
-
-  @override
-  State<HomeToolBar> createState() => _HomeToolBarState();
-}
-
-class _HomeToolBarState extends State<HomeToolBar> {
-  bool welcomeSeen = false;
-  bool isLoading = false;
-  String userName = 'Guest';
-  final ValueNotifier<String> imageNotifier = ValueNotifier<String>('');
-
-  void _fetchUserImage() {
-    imageNotifier.value = PreferenceManager.getData<String>('image') ?? "";
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getUserName();
-    _fetchUserImage();
-    setState(() {});
-  }
+class HomeToolBar extends StatelessWidget {
+  const HomeToolBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool isEmptyTasks = widget.tasks.isEmpty;
-    return Row(
-      spacing: 8,
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              ValueListenableBuilder<String>(
-                valueListenable: imageNotifier,
-                builder: (context, updatedImage, child) =>
-                    updatedImage.isNotEmpty
-                    ? Image.file(
-                        File(updatedImage),
-                        width: AppSize.w(42),
-                        height: AppSize.h(42),
-                      )
-                    : Image.asset(
-                        AssetsManager.imagesAhmed,
-                        width: AppSize.w(42),
-                        height: AppSize.h(42),
-                      ),
+    return Consumer<MainController>(
+      builder: (context, value, child) {
+        final bool isEmptyTasks = value.tasks.isEmpty;
+        return Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+            value.userImagePath.isNotEmpty
+    ? Image.file(
+        File(value.userImagePath),
+        width: AppSize.w(42),
+        height: AppSize.h(42),
+      )
+    : Image.asset(
+        AssetsManager.imagesAhmed,
+        width: AppSize.w(42),
+        height: AppSize.h(42),
+      ),
+                  SizedBox(width: AppSize.w(8)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        FittedBox(
+                          fit: .scaleDown,
+                          child: Text(
+                            overflow: .ellipsis,
+                            maxLines: 1,
+                            '${setGreetingMessage12Hour()}, ${value.userName.capitalizeEachWord}',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ),
+                        SizedBox(height: AppSize.h(2)),
+                        Text(
+                          overflow: .ellipsis,
+                          maxLines: 1,
+                          'حارب لأجل حلمك',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(width: AppSize.w(8)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FittedBox(
-                      fit: .scaleDown,
-                      child: Text(
-                        overflow: .ellipsis,
-                        maxLines: 1,
-                        '${setGreetingMessage12Hour()}, ${userName.capitalizeEachWord}',
-                        style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            Consumer<ThemeManager>(
+              builder: (context, theme, _) {
+                final controller = context.read<ThemeManager>();
+                return Material(
+                  child: InkWell(
+                    hoverColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    overlayColor: .all(
+                      theme.isDark ? Color(0xFF282828) : Color(0xFFFFFFFF),
+                    ),
+                    splashColor: Color(0xFF282828),
+                    borderRadius: .circular(50),
+                    onTap: () async {
+                      await controller.toggleTheme();
+                    },
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 500),
+                      padding: .all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        shape: .circle,
+                      ),
+                      child: Center(
+                        child: Icon(
+                          theme.themeMode == ThemeMode.dark
+                              ? Icons.light_mode_outlined
+                              : Icons.dark_mode_outlined,
+                          color: theme.themeMode == ThemeMode.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                     ),
-                    SizedBox(height: AppSize.h(2)),
-                    Text(
-                      overflow: .ellipsis,
-                      maxLines: 1,
-                      'حارب لأجل حلمك',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        ValueListenableBuilder(
-          valueListenable: ThemeManager.themeNotifier,
-          builder: (context, updatedValue, _) => Material(
-            child: InkWell(
-              hoverColor: Colors.transparent,
-              focusColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              overlayColor: .all(
-                ThemeManager.isDark ? Color(0xFF282828) : Color(0xFFFFFFFF),
-              ),
-              splashColor: Color(0xFF282828),
-              borderRadius: .circular(50),
-              onTap: () async {
-                await ThemeManager.toggleTheme();
+                  ),
+                );
               },
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 500),
-                padding: .all(8),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondaryContainer,
-                  shape: .circle,
-                ),
-                child: Center(
+            ),
+
+            Material(
+              child: InkWell(
+                overlayColor: .all(Color(0xFF282828)),
+                splashColor: Color(0xFF282828),
+                borderRadius: .circular(50),
+                onTap: () async {
+                  value.isLoading = true;
+                  if (isEmptyTasks) {
+                    value.isLoading = false;
+                    return AnimatedSnackBar.material(
+                      borderRadius: BorderRadius.circular(AppSize.r(20)),
+                      animationDuration: const Duration(milliseconds: 700),
+                      duration: const Duration(milliseconds: 3000),
+                      animationCurve: Curves.easeInOut,
+                      mobileSnackBarPosition: MobileSnackBarPosition.top,
+                      'تعذر تنفيذ الإجراء تأكد من اضافة المهام قبل المحاولة',
+                      type: AnimatedSnackBarType.error,
+                    ).show(context);
+                  }
+
+                  final allDone = value.tasks.every((e) => e.isDone);
+
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (context) {
+                      return _showAcceptDialog(allDone, context);
+                    },
+                  );
+
+                  if (confirm != true) return;
+
+                  for (var task in value.tasks) {
+                    task.isDone = !allDone;
+                  }
+
+                  final prefs = await SharedPreferences.getInstance();
+                  final jsonTasks = value.tasks.map((e) => e.toJson()).toList();
+                  await prefs.setString(
+                    StorageKey.tasks,
+                    jsonEncode(jsonTasks),
+                  );
+
+                  value.loadTasks();
+                  if (!context.mounted) return;
+
+                  /// Snackbar
+                  AnimatedSnackBar.material(
+                    borderRadius: BorderRadius.circular(AppSize.r(20)),
+                    animationDuration: const Duration(milliseconds: 700),
+                    duration: const Duration(milliseconds: 3000),
+                    animationCurve: Curves.easeInOut,
+                    mobileSnackBarPosition: MobileSnackBarPosition.top,
+                    !allDone
+                        ? 'تم تنفيذ جميع المهمات'
+                        : 'تم الغاء تنفيذ جميع المهمات',
+                    type: !allDone
+                        ? AnimatedSnackBarType.success
+                        : AnimatedSnackBarType.error,
+                  ).show(context);
+                },
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 500),
+                  padding: .all(4),
+                  decoration: BoxDecoration(
+                    color: isEmptyTasks == true
+                        ? Color(0xFFFF4444)
+                        : Color(0xFF15B86C),
+
+                    shape: .circle,
+                  ),
                   child: Icon(
-                    updatedValue == ThemeMode.dark
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
-                    color: updatedValue == ThemeMode.dark
-                        ? Colors.white
-                        : Colors.black,
+                    isEmptyTasks
+                        ? Icons.error_outline
+                        : !value.tasks.every((e) => e.isDone)
+                        ? Icons.check_circle_outline
+                        : Icons.check_circle,
+                    color: Color(0xFFFFFFFF),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-
-        Material(
-          child: InkWell(
-            overlayColor: .all(Color(0xFF282828)),
-            splashColor: Color(0xFF282828),
-            borderRadius: .circular(50),
-            onTap: () async {
-              isLoading = true;
-              setState(() {});
-              if (isEmptyTasks) {
-                isLoading = false;
-                return AnimatedSnackBar.material(
-                  borderRadius: BorderRadius.circular(AppSize.r(20)),
-                  animationDuration: const Duration(milliseconds: 700),
-                  duration: const Duration(milliseconds: 3000),
-                  animationCurve: Curves.easeInOut,
-                  mobileSnackBarPosition: MobileSnackBarPosition.top,
-                  'تعذر تنفيذ الإجراء تأكد من اضافة المهام قبل المحاولة',
-                  type: AnimatedSnackBarType.error,
-                ).show(context);
-              }
-              setState(() {});
-
-              final allDone = widget.tasks.every((e) => e.isDone);
-
-              final confirm = await showDialog<bool>(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return _showAcceptDialog(allDone, context);
-                },
-              );
-
-              if (confirm != true) return;
-
-              for (var task in widget.tasks) {
-                task.isDone = !allDone;
-              }
-
-              final prefs = await SharedPreferences.getInstance();
-              final jsonTasks = widget.tasks.map((e) => e.toJson()).toList();
-              await prefs.setString('tasks', jsonEncode(jsonTasks));
-
-              widget.refreshTasks();
-              if (!context.mounted) return;
-
-              /// Snackbar
-              AnimatedSnackBar.material(
-                borderRadius: BorderRadius.circular(AppSize.r(20)),
-                animationDuration: const Duration(milliseconds: 700),
-                duration: const Duration(milliseconds: 3000),
-                animationCurve: Curves.easeInOut,
-                mobileSnackBarPosition: MobileSnackBarPosition.top,
-                !allDone
-                    ? 'تم تنفيذ جميع المهمات'
-                    : 'تم الغاء تنفيذ جميع المهمات',
-                type: !allDone
-                    ? AnimatedSnackBarType.success
-                    : AnimatedSnackBarType.error,
-              ).show(context);
-            },
-            child: AnimatedContainer(
-              duration: Duration(milliseconds: 500),
-              padding: .all(4),
-              decoration: BoxDecoration(
-                color: isEmptyTasks == true
-                    ? Color(0xFFFF4444)
-                    : Color(0xFF15B86C),
-
-                shape: .circle,
-              ),
-              child: Icon(
-                isEmptyTasks
-                    ? Icons.error_outline
-                    : !widget.tasks.every((e) => e.isDone)
-                    ? Icons.check_circle_outline
-                    : Icons.check_circle,
-                color: Color(0xFFFFFFFF),
-              ),
-            ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -315,15 +290,5 @@ class _HomeToolBarState extends State<HomeToolBar> {
         ),
       ),
     );
-  }
-
-  Future<void> getUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      welcomeSeen = prefs.getBool('welcome') ?? false;
-      userName = prefs.getString('username') ?? "";
-      log('userName: $userName');
-      log('welcomeSeen: $welcomeSeen');
-    });
   }
 }

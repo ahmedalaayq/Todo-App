@@ -1,81 +1,89 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/Features/profile/views/user_details_view.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/datasource/preference_manager.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/router/app_routes.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
-class ProfileSection extends StatefulWidget {
-  const ProfileSection({
-    super.key,
-    required this.userName,
-    required this.motivationQuote,
-  });
-  final String userName, motivationQuote;
-
-  @override
-  State<ProfileSection> createState() => _ProfileSectionState();
-}
-
-class _ProfileSectionState extends State<ProfileSection> {
-  bool getAppTheme() {
-    return PreferenceManager.getData<bool>('theme') ?? false;
-  }
+class ProfileSection extends StatelessWidget {
+  const ProfileSection({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: .start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'البيانات الشخصية',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: .w500,
+            fontWeight: FontWeight.w500,
             fontFamily: AppFonts.cairoFontFamily,
           ),
         ),
+
         const SizedBox(height: 8),
+
+        /// ================= USER DETAILS =================
         _buildListTile(
           context,
           title: 'معلومات المستخدم',
           onTap: () async {
-            final result = await context.push(
-              UserDetailsView(
-                userName: widget.userName,
-                motivationQuote: widget.motivationQuote,
+            final main = context.read<MainController>();
+
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider.value(
+                  value: main,
+                  child: const UserDetailsView(),
+                ),
               ),
             );
-            if (result != null && result) {}
+
+            if (result == true) {}
           },
           leading: SvgPicture.asset(AssetsManager.imagesIconsProfileIcon),
         ),
-        ValueListenableBuilder<ThemeMode>(
-          valueListenable: ThemeManager.themeNotifier,
-          builder: (context, updatedTheme, _) => _buildListTile(
-            context,
-            title: 'الوضع المظلم',
-            leading: SvgPicture.asset(AssetsManager.imagesIconsDarkModeIcon),
-            haveSwitch: true,
-            switchValue: updatedTheme == .dark,
-            onChangedSwitch: (value) =>
-                ThemeManager.setTheme(value == true ? .dark : .light),
-          ),
+
+        Consumer<ThemeManager>(
+          builder: (context, theme, _) {
+            final controller = context.read<ThemeManager>();
+
+            return _buildListTile(
+              context,
+              title: 'الوضع المظلم',
+              leading: SvgPicture.asset(AssetsManager.imagesIconsDarkModeIcon),
+              haveSwitch: true,
+              switchValue: theme.themeMode == ThemeMode.dark,
+              onChangedSwitch: (value) =>
+                  controller.setTheme(value ? ThemeMode.dark : ThemeMode.light),
+            );
+          },
         ),
+
         _buildListTile(
           context,
           title: 'تسجيل الخروج',
           onTap: () async {
-            final prefs = await SharedPreferences.getInstance();
-            await prefs.remove('welcome');
-            await prefs.remove('username');
-            await prefs.remove('motivationQuote');
+            await PreferenceManager.removeKey(StorageKey.welcome);
+            await PreferenceManager.removeKey(StorageKey.username);
+            await PreferenceManager.removeKey(StorageKey.motivationQuote);
+
             if (!context.mounted) return;
-            context.pushNamedAndRemoveUntil(routeName: AppRoutes.welcomeView);
+
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AppRoutes.welcomeView,
+              (route) => false,
+            );
           },
           leading: SvgPicture.asset(AssetsManager.imagesIconsLogoutIcon),
         ),

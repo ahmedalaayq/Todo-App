@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 
@@ -15,9 +18,11 @@ class _UserProfileInfoState extends State<UserProfileInfo> {
   late String motivationQuote = 'حارب لأجل حلمك';
 
   Future<void> fetchUserNameAndMotivationQuote() async {
-    final prefs = await SharedPreferences.getInstance();
-    userName = prefs.getString('username') ?? userName;
-    motivationQuote = prefs.getString('motivationQuote') ?? motivationQuote;
+    userName =
+        PreferenceManager.getData<String?>(StorageKey.username) ?? userName;
+    motivationQuote =
+        PreferenceManager.getData<String?>(StorageKey.motivationQuote) ??
+        motivationQuote;
     setState(() {});
   }
 
@@ -29,25 +34,30 @@ class _UserProfileInfoState extends State<UserProfileInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          userName.capitalizeEachWord,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: .bold, fontSize: 18),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          motivationQuote,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: .bold,
-            fontSize: 16,
-            fontFamily: AppFonts.cairoFontFamily,
-            color: Color(0xFFC6C6C6),
-          ),
-        ),
-      ],
+    return Consumer<MainController>(
+      builder: (BuildContext context, MainController value, Widget? child) {
+        return Column(
+          children: [
+            Text(
+              value.userName.capitalizeEachWord,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: .bold,
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value.motivationQuote.capitalizeEachWord,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: .bold,
+                fontSize: 16,
+                fontFamily: AppFonts.cairoFontFamily,
+                color: Color(0xFFC6C6C6),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

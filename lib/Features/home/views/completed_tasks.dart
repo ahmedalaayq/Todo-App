@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 import 'widgets/completed_tasks_body.dart';
 
-class CompletedTasks extends StatefulWidget {
-  const CompletedTasks({
-    super.key,
-    required this.completedTasks,
-    required this.onCheck,
-    required this.onEdit,
-  });
-  final List<Task> completedTasks;
-  final Function(Task task, bool value) onCheck;
-  final VoidCallback onEdit;
-
-  @override
-  State<CompletedTasks> createState() => _CompletedTasksState();
-}
-
-class _CompletedTasksState extends State<CompletedTasks> {
-  List<Task> completedTasks = [];
-  @override
-  void initState() {
-    super.initState();
-    completedTasks = widget.completedTasks;
-    setState(() {});
-  }
+class CompletedTasks extends StatelessWidget {
+  const CompletedTasks({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +25,16 @@ class _CompletedTasksState extends State<CompletedTasks> {
           ),
         ),
       ),
-      body: CompletedTasksBody(
-        onEdit: widget.onEdit,
-        tasks: widget.completedTasks,
-        checkCard: widget.onCheck,
-        removeTask: (String id) {},
+      body: Consumer<MainController>(
+        builder: (BuildContext context, value, Widget? child) {
+          final controller = context.read<MainController>();
+          return CompletedTasksBody(
+            onEdit: controller.loadTasks,
+            tasks: value.tasks.where((e) => e.isDone).toList(),
+            checkCard: controller.checkTask,
+            removeTask: (String id) {},
+          );
+        },
       ),
     );
   }

@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/core/datasource/preference_manager.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 
-class ThemeManager {
-  static final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(
-    ThemeMode.dark,
-  );
+class ThemeManager extends ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.light;
 
-  static void init() {
-    final result = PreferenceManager.getData<bool>('theme') ?? true;
-    themeNotifier.value = result ? .dark : .light;
+  ThemeMode get themeMode => _themeMode;
+
+  bool get isDark => _themeMode == ThemeMode.dark;
+
+  Future<void> init() async {
+    final result =
+        PreferenceManager.getData<bool>(StorageKey.theme) ?? true;
+
+    _themeMode = result ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
   }
 
-  static Future<void> toggleTheme() async {
-    themeNotifier.value = (themeNotifier.value == .dark) ? .light : .dark;
+  Future<void> toggleTheme() async {
+    _themeMode =
+        _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
 
     await PreferenceManager.setData<bool>(
-      'theme',
-      themeNotifier.value == .dark,
+      StorageKey.theme,
+      _themeMode == ThemeMode.dark,
     );
+
+    notifyListeners();
   }
 
-  static Future<void> setTheme(ThemeMode mode) async {
-    themeNotifier.value = mode;
-    final sharedPrefsValue = mode == .dark ? true : false;
-    await PreferenceManager.setData<bool>('theme', sharedPrefsValue);
-  }
+  Future<void> setTheme(ThemeMode mode) async {
+    _themeMode = mode;
 
-  static bool get isDark => themeNotifier.value == .dark;
+    await PreferenceManager.setData<bool>(
+      StorageKey.theme,
+      mode == ThemeMode.dark,
+    );
+
+    notifyListeners();
+  }
 }

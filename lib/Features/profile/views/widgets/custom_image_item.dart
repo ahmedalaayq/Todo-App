@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 
 class CustomImageItem extends StatelessWidget {
@@ -46,28 +47,34 @@ Widget _buildOption(
 }) {
   final theme = Theme.of(context);
 
-  return InkWell(
-    borderRadius: BorderRadius.circular(16),
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: BoxDecoration(
-        color: ThemeManager.isDark
-            ? Colors.purple.shade500
-            : Colors.purple.shade200,
+  return Consumer<ThemeManager>(
+    builder: (context, value, child) {
+      return InkWell(
         borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 28, color: Colors.white),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(color: Colors.white),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          decoration: BoxDecoration(
+            color: value.isDark
+                ? Colors.purple.shade500
+                : Colors.purple.shade200,
+            borderRadius: BorderRadius.circular(16),
           ),
-        ],
-      ),
-    ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 28, color: Colors.white),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
   );
 }

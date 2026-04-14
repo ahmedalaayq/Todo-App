@@ -1,23 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Features/home/models/task.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 import 'widgets/todo_tasks_body.dart';
 
 class TodoTasks extends StatelessWidget {
-  const TodoTasks({
-    super.key,
-    required this.todoTasks,
-    required this.onCheck,
-    required this.loadTasks,
-    required this.removeTask, required this.onEdit,
-  });
-  final List<Task> todoTasks;
-  final Function(Task task, bool value) onCheck;
-  final VoidCallback loadTasks;
-  final Function(String id) removeTask;
-    final VoidCallback onEdit;
-
+  const TodoTasks({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +25,16 @@ class TodoTasks extends StatelessWidget {
         ),
       ),
 
-      body: TodoTasksBody(
-        onEdit: onEdit,
-        tasks: todoTasks,
-        checkCard: onCheck,
-        removeTask: removeTask,
+      body: Consumer<MainController>(
+        builder: (BuildContext context, MainController value, _) {
+          final controller = context.read<MainController>();
+          return TodoTasksBody(
+            onEdit: controller.loadTasks,
+            tasks: value.tasks.where((e) => !e.isDone).toList(),
+            checkCard: controller.checkTask,
+            removeTask: (String? id){},
+          );
+        },
       ),
     );
   }

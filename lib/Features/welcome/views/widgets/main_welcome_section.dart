@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/welcome/controller/welcome_controller.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/shared/shared_text_form_field.dart';
 import 'package:todo_app/core/theme/app_fonts.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class MainWelcomeSection extends StatelessWidget {
-  const MainWelcomeSection({super.key, required this.controller});
-  final TextEditingController controller;
+  const MainWelcomeSection({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = context.watch<WelcomeController>();
     return AutofillGroup(
       child: Padding(
         padding: const .symmetric(horizontal: 16.0),
@@ -57,7 +59,7 @@ class MainWelcomeSection extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             SharedTextFormField(
-              controller: controller,
+              controller: controller.nameController,
               hints: [AutofillHints.name, AutofillHints.username],
             ),
           ],

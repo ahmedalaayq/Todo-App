@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/Features/home/models/task.dart';
-import 'package:todo_app/Features/main/views/main_view.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/splash/controller/splash_controller.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 
@@ -14,40 +12,28 @@ class SplashView extends StatefulWidget {
 }
 
 class _SplashViewState extends State<SplashView> {
-  Future<void> initApp() async {
-    final pref = await SharedPreferences.getInstance();
-    final String? taskJson = pref.getString('tasks');
-
-    List<Task> tasks = [];
-
-    if (taskJson != null) {
-      final tasksListJson = jsonDecode(taskJson) as List<dynamic>;
-      tasks = tasksListJson.map((e) => Task.fromJson(e)).toList();
-    }
-
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (!mounted) return;
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => MainView(tasks: tasks)),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-    initApp();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<SplashController>().init(context);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Image.asset(
-        ThemeManager.isDark
-            ? AssetsManager.imagesSplash
-            : AssetsManager.imagesIconsSplashLight,
+      body: Consumer<ThemeManager>(
+        builder: (context, theme, _) {
+          return Center(
+            child: Image.asset(
+              theme.isDark
+                  ? AssetsManager.imagesSplash
+                  : AssetsManager.imagesIconsSplashLight,
+            ),
+          );
+        },
       ),
     );
   }

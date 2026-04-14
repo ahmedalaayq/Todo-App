@@ -13,10 +13,9 @@ class WelcomeView extends StatefulWidget {
 class _WelcomeViewState extends State<WelcomeView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(child: ChangeNotifierProvider(
-        create: (context)=> WelcomeController(),
-        child: WelcomeViewBody())),
+    return ChangeNotifierProvider(
+      create: (_) => WelcomeController()..init(),
+      child: const WelcomeViewBody(),
     );
   }
 }

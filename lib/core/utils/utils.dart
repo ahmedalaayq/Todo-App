@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/datasource/storage_key.dart';
 
 import '../datasource/preference_manager.dart';
 
@@ -221,7 +222,7 @@ String setGreetingMessage12Hour() {
       id: model.id,
       isDone: model.isDone,
     );
-    final taskJson = PreferenceManager.getData<String>('tasks');
+    final taskJson = PreferenceManager.getData<String>(StorageKey.tasks);
     if (taskJson != null) {
       final decodedTasks = jsonDecode(taskJson) as List<dynamic>;
       final element = decodedTasks.firstWhere((e) => e['id'] == model.id);
@@ -230,6 +231,6 @@ String setGreetingMessage12Hour() {
 
       decodedTasks[updatedIndex] = updatedTask;
       final encodedTasks = jsonEncode(decodedTasks);
-      PreferenceManager.setData<String>('tasks', encodedTasks);
+      PreferenceManager.setData<String>(StorageKey.tasks, encodedTasks);
     }
   }

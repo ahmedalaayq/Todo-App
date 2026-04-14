@@ -1,26 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/Features/home/models/task.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/views/widgets/tasks_list.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
-class HighPriority extends StatefulWidget {
-  const HighPriority({
-    super.key,
-    required this.highPriorityTasks,
-    required this.removeTask,
-    required this.checkCard,
-    required this.onEdit,
-  });
-  final List<Task> highPriorityTasks;
-  final Function(String id) removeTask;
-  final Function(Task task, bool value) checkCard;
-  final VoidCallback onEdit;
-
-  @override
-  State<HighPriority> createState() => _HighPriorityState();
-}
-
-class _HighPriorityState extends State<HighPriority> {
+class HighPriority extends StatelessWidget {
+  const HighPriority({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,13 +26,16 @@ class _HighPriorityState extends State<HighPriority> {
           children: [
             SizedBox(height: AppSize.h(24)),
             Expanded(
-              child: TasksList(
-                onEdit: widget.onEdit,
-                removeTask: widget.removeTask,
-                tasks: widget.highPriorityTasks,
-                checkCard: (value, task) {
-                  widget.checkCard(value, task);
-                  setState(() {});
+              child: Consumer<MainController>(
+                builder: (context, value, child) {
+                            final controller = context.read<MainController>();
+
+                  return TasksList(
+                    onEdit: controller.loadTasks,
+                    removeTask:(String? id){},
+                    tasks: value.tasks.where((e)=>e.isHighPriority).toList(),
+                    checkCard:controller.checkTask
+                  );
                 },
               ),
             ),
