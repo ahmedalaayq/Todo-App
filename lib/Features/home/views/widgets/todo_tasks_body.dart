@@ -7,11 +7,13 @@ class TodoTasksBody extends StatelessWidget {
     super.key,
     required this.tasks,
     required this.removeTask,
-    required this.checkCard,
+    required this.checkCard, required this.onEdit,
   });
   final List<Task> tasks;
   final Function(String id) removeTask;
   final Function(Task task, bool value) checkCard;
+    final VoidCallback onEdit;
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -33,6 +35,7 @@ class TodoTasksBody extends StatelessWidget {
           SliverPadding(
             padding: EdgeInsets.only(left: 8, right: 8, bottom: AppSize.h(70), top: 20),
             sliver: SliverTasksList(
+              onEdit: onEdit,
               removeTask: removeTask,
               tasks: tasks,
               checkCard: checkCard,

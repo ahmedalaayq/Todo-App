@@ -10,12 +10,14 @@ class TodoTasks extends StatelessWidget {
     required this.todoTasks,
     required this.onCheck,
     required this.loadTasks,
-    required this.removeTask,
+    required this.removeTask, required this.onEdit,
   });
   final List<Task> todoTasks;
   final Function(Task task, bool value) onCheck;
   final VoidCallback loadTasks;
   final Function(String id) removeTask;
+    final VoidCallback onEdit;
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class TodoTasks extends StatelessWidget {
       ),
 
       body: TodoTasksBody(
+        onEdit: onEdit,
         tasks: todoTasks,
         checkCard: onCheck,
         removeTask: removeTask,

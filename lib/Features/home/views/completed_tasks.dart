@@ -5,10 +5,15 @@ import 'package:todo_app/core/utils/app_size.dart';
 import 'widgets/completed_tasks_body.dart';
 
 class CompletedTasks extends StatefulWidget {
-  const CompletedTasks({super.key, required this.completedTasks, required this.onCheck});
+  const CompletedTasks({
+    super.key,
+    required this.completedTasks,
+    required this.onCheck,
+    required this.onEdit,
+  });
   final List<Task> completedTasks;
-    final Function(Task task, bool value) onCheck;
-
+  final Function(Task task, bool value) onCheck;
+  final VoidCallback onEdit;
 
   @override
   State<CompletedTasks> createState() => _CompletedTasksState();
@@ -23,13 +28,11 @@ class _CompletedTasksState extends State<CompletedTasks> {
     setState(() {});
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-                scrolledUnderElevation: 0.0,
+        scrolledUnderElevation: 0.0,
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
@@ -42,6 +45,7 @@ class _CompletedTasksState extends State<CompletedTasks> {
         ),
       ),
       body: CompletedTasksBody(
+        onEdit: widget.onEdit,
         tasks: widget.completedTasks,
         checkCard: widget.onCheck,
         removeTask: (String id) {},

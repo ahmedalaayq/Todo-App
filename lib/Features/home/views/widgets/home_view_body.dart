@@ -22,6 +22,7 @@ class HomeViewBody extends StatelessWidget {
   final Function(String id) removeTask;
   final VoidCallback refreshTasks;
 
+
   @override
   Widget build(BuildContext context) {
     final List<Task> highPriority = tasks
@@ -80,6 +81,7 @@ class HomeViewBody extends StatelessWidget {
               removeTask: removeTask,
               tasks: tasks,
               checkCard: checkCard,
+              onEdit: refreshTasks,
             ),
           ),
       ],

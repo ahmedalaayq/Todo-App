@@ -8,12 +8,13 @@ class SliverTasksList extends StatelessWidget {
     super.key,
     required this.removeTask,
     required this.tasks,
-    required this.checkCard,
+    required this.checkCard, required this.onEdit,
   });
 
   final Function(String id) removeTask;
   final List<Task> tasks;
   final Function(Task task, bool value) checkCard;
+  final VoidCallback onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class SliverTasksList extends StatelessWidget {
         return Padding(
           padding: .symmetric(horizontal: 8),
           child: CustomTaskItem(
+            onEdit: onEdit,
             removeTask: removeTask,
             task: tasks[index],
             index: index,

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
+import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
 import 'package:todo_app/core/theme/theme_manager.dart';
 import 'package:todo_app/core/utils/app_size.dart';
@@ -27,11 +29,17 @@ class _HomeToolBarState extends State<HomeToolBar> {
   bool welcomeSeen = false;
   bool isLoading = false;
   String userName = 'Guest';
+  final ValueNotifier<String> imageNotifier = ValueNotifier<String>('');
+
+  void _fetchUserImage() {
+    imageNotifier.value = PreferenceManager.getData<String>('image') ?? "";
+  }
 
   @override
   void initState() {
     super.initState();
     getUserName();
+    _fetchUserImage();
     setState(() {});
   }
 
@@ -44,10 +52,20 @@ class _HomeToolBarState extends State<HomeToolBar> {
         Expanded(
           child: Row(
             children: [
-              Image.asset(
-                AssetsManager.imagesAhmed,
-                width: AppSize.w(42),
-                height: AppSize.h(42),
+              ValueListenableBuilder<String>(
+                valueListenable: imageNotifier,
+                builder: (context, updatedImage, child) =>
+                    updatedImage.isNotEmpty
+                    ? Image.file(
+                        File(updatedImage),
+                        width: AppSize.w(42),
+                        height: AppSize.h(42),
+                      )
+                    : Image.asset(
+                        AssetsManager.imagesAhmed,
+                        width: AppSize.w(42),
+                        height: AppSize.h(42),
+                      ),
               ),
               SizedBox(width: AppSize.w(8)),
               Expanded(
@@ -80,7 +98,12 @@ class _HomeToolBarState extends State<HomeToolBar> {
           valueListenable: ThemeManager.themeNotifier,
           builder: (context, updatedValue, _) => Material(
             child: InkWell(
-              overlayColor: .all(Color(0xFF282828)),
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              overlayColor: .all(
+                ThemeManager.isDark ? Color(0xFF282828) : Color(0xFFFFFFFF),
+              ),
               splashColor: Color(0xFF282828),
               borderRadius: .circular(50),
               onTap: () async {
@@ -151,6 +174,7 @@ class _HomeToolBarState extends State<HomeToolBar> {
               await prefs.setString('tasks', jsonEncode(jsonTasks));
 
               widget.refreshTasks();
+              if (!context.mounted) return;
 
               /// Snackbar
               AnimatedSnackBar.material(

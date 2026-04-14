@@ -8,11 +8,13 @@ class HighPriority extends StatefulWidget {
     super.key,
     required this.highPriorityTasks,
     required this.removeTask,
-    required this.checkCard, 
+    required this.checkCard,
+    required this.onEdit,
   });
   final List<Task> highPriorityTasks;
   final Function(String id) removeTask;
   final Function(Task task, bool value) checkCard;
+  final VoidCallback onEdit;
 
   @override
   State<HighPriority> createState() => _HighPriorityState();
@@ -27,9 +29,10 @@ class _HighPriorityState extends State<HighPriority> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Text(
           'المهمات ذات الأولوية القصوى',
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: .bold,fontSize: AppSize.sp(18)),
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: .bold,
+            fontSize: AppSize.sp(18),
+          ),
         ),
       ),
       body: Padding(
@@ -39,13 +42,12 @@ class _HighPriorityState extends State<HighPriority> {
             SizedBox(height: AppSize.h(24)),
             Expanded(
               child: TasksList(
+                onEdit: widget.onEdit,
                 removeTask: widget.removeTask,
                 tasks: widget.highPriorityTasks,
                 checkCard: (value, task) {
                   widget.checkCard(value, task);
-                  setState(() {
-                    
-                  });
+                  setState(() {});
                 },
               ),
             ),

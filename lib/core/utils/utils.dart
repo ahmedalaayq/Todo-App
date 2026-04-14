@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+
+import '../datasource/preference_manager.dart';
 
 String setGreetingMessage12Hour() {
     int hour = DateTime.now().hour;
@@ -36,7 +39,7 @@ String setGreetingMessage12Hour() {
     Task(
       taskName: "تحديث dependencies",
       taskDescription: "تحديث مكتبات Flutter و Dart لأحدث الإصدارات",
-      isDone: false,
+      isDone: true,
       isHighPriority: false,
     ),
     Task(
@@ -48,7 +51,7 @@ String setGreetingMessage12Hour() {
     Task(
       taskName: "تطوير واجهة مستخدم جديدة",
       taskDescription: "تصميم شاشة Dashboard جديدة بتفاعلات سلسة",
-      isDone: false,
+      isDone: true,
       isHighPriority: true,
     ),
     Task(
@@ -72,7 +75,7 @@ String setGreetingMessage12Hour() {
     Task(
       taskName: "إعداد CI/CD",
       taskDescription: "ربط المشروع مع GitHub Actions للنشر التلقائي",
-      isDone: false,
+      isDone: true,
       isHighPriority: true,
     ),
     Task(
@@ -96,7 +99,7 @@ String setGreetingMessage12Hour() {
     Task(
       taskName: "إضافة ميزة Dark Mode",
       taskDescription: "تمكين المستخدمين من التبديل بين الوضع الليلي والفاتح",
-      isDone: false,
+      isDone: true,
       isHighPriority: true,
     ),
     Task(
@@ -205,3 +208,28 @@ String setGreetingMessage12Hour() {
 }
 
   
+    void updateTaskService(
+    TextEditingController editTaskController,
+    TextEditingController editTaskDescriptionController,
+    bool localHighPriority,
+    Task model,
+  ) {
+    final Task updatedTask = Task(
+      taskName: editTaskController.text,
+      taskDescription: editTaskDescriptionController.text,
+      isHighPriority: localHighPriority,
+      id: model.id,
+      isDone: model.isDone,
+    );
+    final taskJson = PreferenceManager.getData<String>('tasks');
+    if (taskJson != null) {
+      final decodedTasks = jsonDecode(taskJson) as List<dynamic>;
+      final element = decodedTasks.firstWhere((e) => e['id'] == model.id);
+
+      final int updatedIndex = decodedTasks.indexOf(element);
+
+      decodedTasks[updatedIndex] = updatedTask;
+      final encodedTasks = jsonEncode(decodedTasks);
+      PreferenceManager.setData<String>('tasks', encodedTasks);
+    }
+  }

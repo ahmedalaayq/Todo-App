@@ -91,6 +91,7 @@ class HighPriorityTaskItem extends StatelessWidget {
             onTap: () async {
               await context.push(
                 HighPriority(
+                  onEdit: refreshTasks,
                   highPriorityTasks: tasks
                       .where((e) => e.isHighPriority)
                       .toList(),

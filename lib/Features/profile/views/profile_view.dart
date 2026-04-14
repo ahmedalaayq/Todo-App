@@ -27,6 +27,8 @@ class _ProfileViewState extends State<ProfileView> {
     _fetchUserInfo();
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(

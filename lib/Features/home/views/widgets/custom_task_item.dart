@@ -1,11 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/Features/home/views/widgets/edit_task_widget.dart';
 import 'package:todo_app/core/enums/task_item_actions_enum.dart';
 import 'package:todo_app/core/extensions/shared_extensions.dart';
-import 'package:todo_app/core/shared/shared_text_form_field.dart';
 import 'package:todo_app/core/utils/app_size.dart';
-
-import 'high_priority_item.dart';
+import 'task_id_card.dart';
 
 class CustomTaskItem extends StatefulWidget {
   const CustomTaskItem({
@@ -14,12 +14,14 @@ class CustomTaskItem extends StatefulWidget {
     required this.index,
     required this.checkCard,
     required this.removeTask,
+    required this.onEdit,
   });
 
   final Task task;
   final int index;
   final Function(Task task, bool value) checkCard;
   final Function(String id) removeTask;
+  final VoidCallback onEdit;
 
   @override
   State<CustomTaskItem> createState() => _CustomTaskItemState();
@@ -27,7 +29,6 @@ class CustomTaskItem extends StatefulWidget {
 
 class _CustomTaskItemState extends State<CustomTaskItem> {
   bool isBtnActive = false;
-  bool highPriorityTask = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _taskNameController = TextEditingController();
@@ -47,134 +48,6 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
           _taskNameController.text.trim().isNotEmpty &&
           _taskDescriptionController.text.trim().isNotEmpty;
     });
-  }
-
-  void _openEditBottomSheet() {
-    _taskNameController.text = widget.task.taskName;
-    _taskDescriptionController.text = widget.task.taskDescription;
-    highPriorityTask = widget.task.isHighPriority;
-    validateFields();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: DraggableScrollableSheet(
-            initialChildSize: 0.65,
-            minChildSize: 0.45,
-            maxChildSize: 0.90,
-            expand: false,
-            builder: (context, scrollController) {
-              return Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppSize.w(16),
-                  vertical: AppSize.h(16),
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(AppSize.r(28)),
-                  ),
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    child: Column(
-                      crossAxisAlignment: .start,
-                      mainAxisSize: .min,
-                      children: [
-                        Center(
-                          child: Container(
-                            width: AppSize.w(50),
-                            height: AppSize.h(5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade400,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: AppSize.h(20)),
-
-                        Center(
-                          child: Text(
-                            textAlign: .center,
-                            'Edit Task',
-                            style: Theme.of(context).textTheme.titleLarge
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        SizedBox(height: AppSize.h(24)),
-
-                        Text(
-                          'عنوان المهمة',
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: AppSize.h(8)),
-                        SharedTextFormField(
-                          controller: _taskNameController,
-                          hintText: 'Finish UI design for login screen',
-                        ),
-
-                        SizedBox(height: AppSize.h(20)),
-
-                        Text(
-                          'وصف المهمة',
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: AppSize.h(8)),
-                        SharedTextFormField(
-                          controller: _taskDescriptionController,
-                          enableValidator: false,
-                          hintText:
-                              'Finish onboarding UI and hand off to devs by Thursday.',
-                          maxLines: 5,
-                        ),
-
-                        SizedBox(height: AppSize.h(20)),
-
-                        HighPriorityItem(
-                          isBtnActive: highPriorityTask,
-                          highPriorityCallBack: (value) {
-                            setState(() {
-                              highPriorityTask = value ?? false;
-                            });
-                          },
-                        ),
-
-                        SizedBox(height: AppSize.h(24)),
-
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: isBtnActive
-                                ? () {
-                                    Navigator.pop(context);
-                                  }
-                                : null,
-                            child: const Text('Save Changes'),
-                          ),
-                        ),
-
-                        SizedBox(height: AppSize.h(12)),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -259,13 +132,23 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
               ),
               PopupMenuButton<TaskItemActionEnum>(
                 icon: const Icon(Icons.more_vert),
-                onSelected: (value) {
-                  if (value == TaskItemActionEnum.check) {
-                    widget.checkCard(widget.task, !widget.task.isDone);
-                  } else if (value == TaskItemActionEnum.remove) {
-                    widget.removeTask(widget.task.id);
-                  } else {
-                    _openEditBottomSheet();
+                onSelected: (value) async {
+                  switch (value) {
+                    case TaskItemActionEnum.check:
+                      widget.checkCard(widget.task, !widget.task.isDone);
+                      break;
+                    case TaskItemActionEnum.edit:
+                      final bool? result = await _openEditBottomSheet(context);
+                      if (result == true) {
+                        widget.onEdit();
+                      }
+                      break;
+                    case TaskItemActionEnum.remove:
+                      widget.removeTask(widget.task.id);
+                      break;
+                    case TaskItemActionEnum.displayId:
+                      _openShowIdDialog();
+                      break;
                   }
                 },
                 itemBuilder: (_) => TaskItemActionEnum.values.map((e) {
@@ -283,6 +166,56 @@ class _CustomTaskItemState extends State<CustomTaskItem> {
           ),
         ),
       ),
+    );
+  }
+
+  void _openShowIdDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final theme = Theme.of(context);
+
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          backgroundColor: theme.colorScheme.surface,
+          titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
+          contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+          actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          title: TaskIdTitle(theme: theme),
+          content: TaskIDCard(theme: theme, taskId: widget.task.id),
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () {
+                context.pop();
+              },
+              icon: const Icon(Icons.check_rounded),
+              label: const Text('Close'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<bool?> _openEditBottomSheet(BuildContext context) async {
+    return showModalBottomSheet<bool?>(
+      showDragHandle: true,
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return EditTaskWidget(model: widget.task);
+      },
     );
   }
 }
