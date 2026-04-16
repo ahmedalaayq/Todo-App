@@ -47,7 +47,7 @@ class MainController with ChangeNotifier {
 
   String userName = 'Guest';
   String motivationQuote = '';
-  String userImagePath = '';
+  String? userImagePath;
 
   List<Task> tasks = [];
 

@@ -57,10 +57,10 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
                       radius: AppSize.r(50),
                       backgroundImage: FileImage(File(pickedImage.path)),
                     );
-                  } else if (main.userImagePath.isNotEmpty) {
+                  } else if (main.userImagePath != null && main.userImagePath!.isNotEmpty) {
                     return CircleAvatar(
                       radius: AppSize.r(50),
-                      backgroundImage: FileImage(File(main.userImagePath)),
+                      backgroundImage: FileImage(File(main.userImagePath!)),
                     );
                   } else {
                     return CircleAvatar(

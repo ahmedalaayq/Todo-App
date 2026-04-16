@@ -20,24 +20,26 @@ class HomeToolBar extends StatelessWidget {
     return Consumer<MainController>(
       builder: (context, value, child) {
         final bool isEmptyTasks = value.tasks.isEmpty;
+        final hasImage =
+            value.userImagePath != null && value.userImagePath!.isNotEmpty;
         return Row(
           spacing: 8,
           children: [
             Expanded(
               child: Row(
                 children: [
-                  value.userImagePath.isNotEmpty
+                  hasImage
                       ? Image.file(
-                        fit: .contain,
-                          File(value.userImagePath),
+                          File(value.userImagePath!),
                           width: AppSize.w(42),
                           height: AppSize.h(42),
+                          fit: BoxFit.contain,
                         )
                       : Image.asset(
-                        fit: .contain,
                           AssetsManager.imagesAhmed,
                           width: AppSize.w(42),
                           height: AppSize.h(42),
+                          fit: BoxFit.contain,
                         ),
                   SizedBox(width: AppSize.w(8)),
                   Expanded(
@@ -70,7 +72,6 @@ class HomeToolBar extends StatelessWidget {
               builder: (context, theme, _) {
                 final controller = context.read<ThemeManager>();
                 return Material(
-                  
                   type: .transparency,
                   child: InkResponse(
                     radius: 28,
@@ -78,9 +79,7 @@ class HomeToolBar extends StatelessWidget {
                     hoverColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    overlayColor: .all(
-                      Colors.transparent
-                    ),
+                    overlayColor: .all(Colors.transparent),
                     splashColor: Colors.transparent,
                     borderRadius: .circular(50),
                     onTap: () async {
@@ -91,8 +90,8 @@ class HomeToolBar extends StatelessWidget {
                       padding: .all(8),
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.grey.shade400
-                          ,width: 1.5
+                          color: Colors.grey.shade400,
+                          width: 1.5,
                         ),
                         color: Colors.transparent,
                         // color: Theme.of(context).colorScheme.secondaryContainer,
