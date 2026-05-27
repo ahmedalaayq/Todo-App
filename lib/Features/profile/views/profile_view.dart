@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/Features/profile/views/widgets/profile_avatar.dart';
 import 'package:todo_app/Features/profile/views/widgets/profile_section.dart';
 import 'package:todo_app/Features/profile/views/widgets/user_profile_info.dart';
-import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class ProfileView extends StatefulWidget {

@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/Features/profile/views/widgets/custom_image_item.dart';
 import 'package:todo_app/core/assets_manager/assets_manager.dart';
-import 'package:todo_app/core/datasource/preference_manager.dart';
-import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/utils/app_size.dart';
 
 class ProfileAvatar extends StatefulWidget {
