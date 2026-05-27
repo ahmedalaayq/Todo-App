@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/main/controller/main_controller.dart';
+import 'package:todo_app/core/datasource/file_storage_manager.dart';
 import 'package:todo_app/core/datasource/preference_manager.dart';
 import 'package:todo_app/core/datasource/storage_key.dart';
 import 'package:todo_app/core/router/app_routes.dart';
@@ -19,6 +19,7 @@ void main() async {
 
 
   await PreferenceManager.init();
+  await FileStorageManager().init();
   final welcomeSeen = PreferenceManager.getData<bool?>(StorageKey.welcome) ?? false;
   runApp(
     MultiProvider(
