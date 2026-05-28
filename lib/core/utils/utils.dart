@@ -3,27 +3,28 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Features/home/models/task.dart';
+import 'package:todo_app/core/datasource/file_storage_manager.dart';
 import 'package:todo_app/core/datasource/storage_key.dart';
 
 import '../datasource/preference_manager.dart';
 
 String setGreetingMessage12Hour() {
-    int hour = DateTime.now().hour;
-    bool isAM = hour < 12;
+  int hour = DateTime.now().hour;
+  bool isAM = hour < 12;
 
-    int hour12 = hour % 12;
-    if (hour12 == 0) hour12 = 12;
+  int hour12 = hour % 12;
+  if (hour12 == 0) hour12 = 12;
 
-    if (isAM) {
-      return 'صباح الخير';
-    } else if (hour12 < 5) {
-      return 'بعد الظهر';
-    } else {
-      return 'مساء الخير';
-    }
+  if (isAM) {
+    return 'صباح الخير';
+  } else if (hour12 < 5) {
+    return 'بعد الظهر';
+  } else {
+    return 'مساء الخير';
   }
+}
 
-  Future<void> setTestAppTasks({required SharedPreferences prefs}) async {
+Future<void> setTestAppTasks({required SharedPreferences prefs}) async {
   List<Task> exampleTasks = [
     Task(
       taskName: "مراجعة كود المشروع",
@@ -208,29 +209,28 @@ String setGreetingMessage12Hour() {
   await prefs.setString('tasks', jsonString);
 }
 
-  
-    void updateTaskService(
+void updateTaskService(
     TextEditingController editTaskController,
     TextEditingController editTaskDescriptionController,
     bool localHighPriority,
     Task model,
-  ) {
-    final Task updatedTask = Task(
-      taskName: editTaskController.text,
-      taskDescription: editTaskDescriptionController.text,
-      isHighPriority: localHighPriority,
-      id: model.id,
-      isDone: model.isDone,
-    );
-    final taskJson = PreferenceManager.getData<String>(StorageKey.tasks);
-    if (taskJson != null) {
-      final decodedTasks = jsonDecode(taskJson) as List<dynamic>;
-      final element = decodedTasks.firstWhere((e) => e['id'] == model.id);
+    ) async {
 
-      final int updatedIndex = decodedTasks.indexOf(element);
+  final updatedTask = Task(
+    taskName: editTaskController.text,
+    taskDescription: editTaskDescriptionController.text,
+    isHighPriority: localHighPriority,
+    id: model.id,
+    isDone: model.isDone,
+  );
 
-      decodedTasks[updatedIndex] = updatedTask;
-      final encodedTasks = jsonEncode(decodedTasks);
-      PreferenceManager.setData<String>(StorageKey.tasks, encodedTasks);
-    }
+  final data = await FileStorageManager().loadFileContent();
+
+  final updatedIndex = data.indexWhere((e) => e.id == model.id);
+
+  if (updatedIndex != -1) {
+    data[updatedIndex] = updatedTask;
+
+    await FileStorageManager().saveFileContent(data);
   }
+}

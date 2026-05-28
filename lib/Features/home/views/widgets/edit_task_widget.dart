@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/Features/main/controller/main_controller.dart';
 import 'package:todo_app/core/shared/shared_text_form_field.dart';
 import 'package:todo_app/core/utils/app_size.dart';
-import 'package:todo_app/core/utils/utils.dart';
 
 import '../../models/task.dart';
 import 'high_priority_item.dart';
 
 class EditTaskWidget extends StatefulWidget {
-  const EditTaskWidget({super.key, required this.model});
+  const EditTaskWidget({
+    super.key,
+    required this.model,
+  });
+
   final Task model;
 
   @override
@@ -15,21 +20,33 @@ class EditTaskWidget extends StatefulWidget {
 }
 
 class _EditTaskWidgetState extends State<EditTaskWidget> {
-  late TextEditingController editTaskController = TextEditingController();
+  late final TextEditingController editTaskController;
 
-  late TextEditingController editTaskDescriptionController =
-      TextEditingController();
+  late final TextEditingController editTaskDescriptionController;
 
   late bool localHighPriority;
 
   @override
   void initState() {
     super.initState();
-    editTaskController = TextEditingController(text: widget.model.taskName);
+
+    editTaskController = TextEditingController(
+      text: widget.model.taskName,
+    );
+
     editTaskDescriptionController = TextEditingController(
       text: widget.model.taskDescription,
     );
+
     localHighPriority = widget.model.isHighPriority;
+  }
+
+  @override
+  void dispose() {
+    editTaskController.dispose();
+    editTaskDescriptionController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -51,7 +68,6 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
               children: [
                 SizedBox(height: AppSize.h(20)),
 
-                // Title
                 SharedTextFormField(
                   controller: editTaskController,
                   hintText: 'Task title',
@@ -59,7 +75,6 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
 
                 SizedBox(height: AppSize.h(16)),
 
-                // Description
                 SharedTextFormField(
                   controller: editTaskDescriptionController,
                   hintText: 'Task description',
@@ -82,12 +97,16 @@ class _EditTaskWidgetState extends State<EditTaskWidget> {
 
                 ElevatedButton(
                   onPressed: () async {
-                    updateTaskService(
-                      editTaskController,
-                      editTaskDescriptionController,
-                      localHighPriority,
-                      widget.model,
+                    await context.read<MainController>().updateTask(
+                      oldTask: widget.model,
+                      title: editTaskController.text.trim(),
+                      description:
+                      editTaskDescriptionController.text.trim(),
+                      isHighPriority: localHighPriority,
                     );
+
+                    if (!context.mounted) return;
+
                     Navigator.pop(context, true);
                   },
                   child: const Text("Update Task"),

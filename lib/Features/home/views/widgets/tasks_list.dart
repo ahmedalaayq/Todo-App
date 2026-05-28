@@ -16,7 +16,9 @@ class TasksList extends StatelessWidget {
           itemBuilder: (context, index) {
             return Padding(
               padding: .symmetric(horizontal: 8),
-              child: CustomTaskItem(index: index),
+              child: CustomTaskItem(
+                task: value[index],
+              ),
             );
           },
           itemCount: value.length,

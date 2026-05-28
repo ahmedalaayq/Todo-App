@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/Features/home/models/task.dart';
 import 'package:todo_app/Features/home/views/widgets/high_priority_task_item.dart';
@@ -12,6 +15,7 @@ import 'home_toolbar.dart';
 
 class HomeViewBody extends StatelessWidget {
   const HomeViewBody({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Consumer<MainController>(
@@ -56,6 +60,17 @@ class HomeViewBody extends StatelessWidget {
               ),
             ),
 
+            if (value.isLoading)
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(
+                  child: LoadingAnimationWidget.staggeredDotsWave(
+                    color: const Color(0xFF15B86C),
+                    size: AppSize.sp(20),
+                  ),
+                )
+              ),
+
             if (value.tasks.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
@@ -77,7 +92,9 @@ class HomeViewBody extends StatelessWidget {
                   right: 8,
                   bottom: AppSize.h(70),
                 ),
-                sliver: SliverTasksList(),
+                sliver: SliverTasksList(
+                  tasks: value.tasks,
+                ),
               ),
           ],
         );

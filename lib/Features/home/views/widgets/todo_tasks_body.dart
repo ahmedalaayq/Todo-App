@@ -35,7 +35,9 @@ class TodoTasksBody extends StatelessWidget {
                   bottom: AppSize.h(70),
                   top: 20,
                 ),
-                sliver: SliverTasksList(),
+                sliver: SliverTasksList(
+                  tasks: tasksList,
+                ),
               ),
           ],
         );
